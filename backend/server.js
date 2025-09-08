@@ -7,6 +7,10 @@ const morgan = require('morgan');
 // Load environment variables
 dotenv.config();
 
+// Route files
+const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
+
 // Initialize app
 const app = express();
 
@@ -16,6 +20,9 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 // Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+
 app.get('/', (req, res) => {
   res.json({ message: 'Food Court Management System API' });
 });

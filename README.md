@@ -20,6 +20,7 @@ A comprehensive management system for food courts that enables customers to brow
   - [9. Admin Dashboard](#9-admin-dashboard)
 - [Technology Stack](#technology-stack)
 - [Architecture Overview](#architecture-overview)
+- [Project Structure](#project-structure)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Contributing](#contributing)
@@ -30,6 +31,33 @@ A comprehensive management system for food courts that enables customers to brow
 The Food Court Management System streamlines operations in food courts by providing a digital platform for customers to order food from multiple stalls and for administrators to manage their businesses efficiently. The system supports real-time order tracking, multi-stall ordering, payment processing, inventory management, and detailed analytics.
 
 For a detailed breakdown of how this project is structured and will be developed, see [PROJECT_PLAN.md](PROJECT_PLAN.md).
+
+## Project Breakdown
+
+### Part 1: User Authentication and Management System ✅ (Completed)
+- User registration with email verification
+- User login with JWT authentication
+- Role-based access control (Customer, Stall Owner, Food Court Owner)
+- Profile management
+- Admin user registration (Food Court Owner only)
+
+### Part 2: Stall and Menu Management System
+- Stall creation, editing, and deletion
+- Menu item management
+- Stall categorization and organization
+- Stall owner assignment
+
+### Part 3: Order Processing and Cart System
+- Multi-stall shopping cart
+- Order placement and tracking
+- Payment processing integration
+- Real-time order status updates
+
+### Part 4: Reporting, Analytics, and Admin Dashboard
+- Sales and performance reporting
+- Stall ranking system
+- Analytics dashboard
+- Advanced admin features
 
 ## User Roles
 
@@ -222,6 +250,35 @@ Manage the application logic and act as intermediaries between Models and Views:
 - Payment processing controllers
 - Reporting controllers
 
+## Project Structure
+
+```
+food-court-management/
+├── backend/
+│   ├── controllers/     # Request handlers (MVC Controllers)
+│   ├── models/          # Database models (MVC Models)
+│   ├── routes/          # API routes
+│   ├── middleware/      # Custom middleware
+│   ├── config/          # Configuration files
+│   ├── utils/           # Utility functions
+│   ├── views/           # Server-side views (if any)
+│   ├── server.js        # Entry point
+│   └── README.md        # Backend documentation
+├── frontend/
+│   ├── public/          # Static assets
+│   ├── src/
+│   │   ├── components/  # Reusable UI components (MVC Views)
+│   │   ├── pages/       # Page components (MVC Views)
+│   │   ├── redux/       # State management
+│   │   ├── services/    # API service files
+│   │   ├── styles/      # CSS/SCSS files
+│   │   └── App.js       # Main App component
+│   └── package.json
+├── .env                 # Environment variables
+├── README.md            # Project documentation
+└── package.json         # Root package.json
+```
+
 ## Installation
 
 ### Prerequisites
@@ -233,7 +290,7 @@ Manage the application logic and act as intermediaries between Models and Views:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/food-court-management.git
+   git clone https://github.com/jonayedeusufzai/mern-stack.git
    cd food-court-management
    ```
 
@@ -304,69 +361,6 @@ PAYMENT_API_KEYS=your_payment_gateway_api_keys
 4. Generate sales and performance reports
 5. Rank stalls based on performance metrics
 6. Send payment reminders to stall owners
-
-## Project Structure
-
-```
-food-court-management/
-├── backend/
-│   ├── controllers/     # Request handlers (MVC Controllers)
-│   ├── models/          # Database models (MVC Models)
-│   ├── routes/          # API routes
-│   ├── middleware/      # Custom middleware
-│   ├── config/          # Configuration files
-│   ├── utils/           # Utility functions
-│   ├── views/           # Server-side views (if any)
-│   └── server.js        # Entry point
-├── frontend/
-│   ├── public/          # Static assets
-│   ├── src/
-│   │   ├── components/  # Reusable UI components (MVC Views)
-│   │   ├── pages/       # Page components (MVC Views)
-│   │   ├── redux/       # State management
-│   │   ├── services/    # API service files
-│   │   ├── styles/      # CSS/SCSS files
-│   │   └── App.js       # Main App component
-│   └── package.json
-├── .env                 # Environment variables
-├── README.md            # Project documentation
-└── package.json         # Root package.json
-```
-
-## API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - Customer registration
-- `POST /api/auth/login` - User login
-- `POST /api/auth/admin/register` - Admin registration (Food Court Owner only)
-
-### Stalls
-- `GET /api/stalls` - Get all stalls
-- `GET /api/stalls/:id` - Get specific stall details
-- `POST /api/stalls` - Create new stall (Admin only)
-- `PUT /api/stalls/:id` - Update stall (Admin/Stall Owner)
-- `DELETE /api/stalls/:id` - Delete stall (Admin only)
-
-### Menu Items
-- `GET /api/menu/:stallId` - Get menu items for a stall
-- `POST /api/menu` - Add menu item (Stall Owner only)
-- `PUT /api/menu/:id` - Update menu item (Stall Owner only)
-- `DELETE /api/menu/:id` - Delete menu item (Stall Owner only)
-
-### Orders
-- `GET /api/orders` - Get all orders (Admin)
-- `GET /api/orders/customer/:customerId` - Get customer orders
-- `GET /api/orders/stall/:stallId` - Get stall orders (Stall Owner)
-- `POST /api/orders` - Create new order
-- `PUT /api/orders/:id/status` - Update order status
-
-### Payments
-- `POST /api/payments` - Process payment
-- `GET /api/payments/:orderId` - Get payment details
-
-### Reports
-- `GET /api/reports/sales` - Generate sales report (Admin)
-- `GET /api/reports/performance` - Generate performance report (Admin)
 
 ## Contributing
 
