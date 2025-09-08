@@ -5,6 +5,7 @@ A comprehensive management system for food courts that enables customers to brow
 ## Table of Contents
 
 - [System Overview](#system-overview)
+- [Project Breakdown](#project-breakdown)
 - [User Roles](#user-roles)
 - [Core Features](#core-features)
 - [Workflows](#workflows)
@@ -27,6 +28,8 @@ A comprehensive management system for food courts that enables customers to brow
 ## System Overview
 
 The Food Court Management System streamlines operations in food courts by providing a digital platform for customers to order food from multiple stalls and for administrators to manage their businesses efficiently. The system supports real-time order tracking, multi-stall ordering, payment processing, inventory management, and detailed analytics.
+
+For a detailed breakdown of how this project is structured and will be developed, see [PROJECT_PLAN.md](PROJECT_PLAN.md).
 
 ## User Roles
 
