@@ -38,5 +38,13 @@ pids
 *.db
 *.sqlite
 
-# OS generated files
-Thumbs.db
+# Package lock files
+package-lock.json
+yarn.lock
+
+# Build outputs
+/backend/dist
+/frontend/build
+
+# MongoDB
+mongod.lock
