@@ -10,6 +10,10 @@ import StallOwnerDashboard from './components/dashboard/StallOwnerDashboard';
 import FoodCourtOwnerDashboard from './components/dashboard/FoodCourtOwnerDashboard';
 import Profile from './components/profile/Profile';
 import DashboardLayout from './components/dashboard/DashboardLayout';
+import StallsPage from './components/stalls/StallsPage';
+import MenuPage from './components/menu/MenuPage';
+import StallManagement from './components/stalls/StallManagement';
+import MenuManagement from './components/menu/MenuManagement';
 
 function App() {
   const dispatch = useDispatch();
@@ -51,6 +55,28 @@ function App() {
           <Route path="/profile" element={
             <DashboardLayout user={user}>
               <Profile />
+            </DashboardLayout>
+          } />
+          {/* Customer routes */}
+          <Route path="/stalls" element={
+            <DashboardLayout user={user}>
+              <StallsPage />
+            </DashboardLayout>
+          } />
+          <Route path="/stalls/:stallId" element={
+            <DashboardLayout user={user}>
+              <MenuPage />
+            </DashboardLayout>
+          } />
+          {/* Stall Owner routes */}
+          <Route path="/stalls/manage" element={
+            <DashboardLayout user={user}>
+              <StallManagement />
+            </DashboardLayout>
+          } />
+          <Route path="/menu/manage" element={
+            <DashboardLayout user={user}>
+              <MenuManagement />
             </DashboardLayout>
           } />
         </Routes>

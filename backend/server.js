@@ -10,6 +10,8 @@ dotenv.config();
 // Route files
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
+const stallRoutes = require('./routes/stallRoutes');
+const menuRoutes = require('./routes/menuRoutes');
 
 // Initialize app
 const app = express();
@@ -22,6 +24,8 @@ app.use(morgan('dev'));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/stalls', stallRoutes);
+app.use('/api/menu', menuRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Food Court Management System API' });

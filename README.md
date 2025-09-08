@@ -41,11 +41,12 @@ For a detailed breakdown of how this project is structured and will be developed
 - Profile management
 - Admin user registration (Food Court Owner only)
 
-### Part 2: Stall and Menu Management System
+### Part 2: Stall and Menu Management System ✅ (Completed)
 - Stall creation, editing, and deletion
 - Menu item management
 - Stall categorization and organization
 - Stall owner assignment
+- Customer browsing of stalls and menus
 
 ### Part 3: Order Processing and Cart System
 - Multi-stall shopping cart

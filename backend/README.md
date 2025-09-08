@@ -20,14 +20,20 @@ This is the backend API for the Food Court Management System, built with Node.js
 backend/
 ├── controllers/
 │   ├── authController.js
-│   └── userController.js
+│   ├── userController.js
+│   ├── stallController.js
+│   └── menuController.js
 ├── middleware/
 │   └── authMiddleware.js
 ├── models/
-│   └── User.js
+│   ├── User.js
+│   ├── Stall.js
+│   └── MenuItem.js
 ├── routes/
 │   ├── authRoutes.js
-│   └── userRoutes.js
+│   ├── userRoutes.js
+│   ├── stallRoutes.js
+│   └── menuRoutes.js
 ├── config/
 ├── utils/
 ├── server.js
@@ -229,6 +235,331 @@ Delete user - Requires authentication and admin privileges
 }
 ```
 
+### Stall Routes
+
+#### `GET /api/stalls`
+Get all active stalls
+
+**Response:**
+```json
+[
+  {
+    "_id": "string",
+    "name": "string",
+    "description": "string",
+    "owner": {
+      "_id": "string",
+      "name": "string",
+      "email": "string"
+    },
+    "category": "string",
+    "rent": "number",
+    "isActive": "boolean",
+    "image": "string",
+    "location": "string",
+    "contactInfo": {
+      "phone": "string",
+      "email": "string"
+    },
+    "createdAt": "date",
+    "updatedAt": "date"
+  }
+]
+```
+
+#### `GET /api/stalls/:id`
+Get single stall by ID
+
+**Response:**
+```json
+{
+  "_id": "string",
+  "name": "string",
+  "description": "string",
+  "owner": {
+    "_id": "string",
+    "name": "string",
+    "email": "string"
+  },
+  "category": "string",
+  "rent": "number",
+  "isActive": "boolean",
+  "image": "string",
+  "location": "string",
+  "contactInfo": {
+    "phone": "string",
+    "email": "string"
+  },
+  "createdAt": "date",
+  "updatedAt": "date"
+}
+```
+
+#### `POST /api/stalls`
+Create new stall - Requires authentication and admin privileges
+
+**Request Body:**
+```json
+{
+  "name": "string",
+  "description": "string",
+  "category": "string",
+  "rent": "number",
+  "location": "string",
+  "contactInfo": {
+    "phone": "string",
+    "email": "string"
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "_id": "string",
+  "name": "string",
+  "description": "string",
+  "owner": "string",
+  "category": "string",
+  "rent": "number",
+  "isActive": "boolean",
+  "image": "string",
+  "location": "string",
+  "contactInfo": {
+    "phone": "string",
+    "email": "string"
+  },
+  "createdAt": "date",
+  "updatedAt": "date"
+}
+```
+
+#### `PUT /api/stalls/:id`
+Update stall - Requires authentication and admin privileges
+
+**Request Body:**
+```json
+{
+  "name": "string",
+  "description": "string",
+  "category": "string",
+  "rent": "number",
+  "isActive": "boolean",
+  "location": "string",
+  "contactInfo": {
+    "phone": "string",
+    "email": "string"
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "_id": "string",
+  "name": "string",
+  "description": "string",
+  "owner": "string",
+  "category": "string",
+  "rent": "number",
+  "isActive": "boolean",
+  "image": "string",
+  "location": "string",
+  "contactInfo": {
+    "phone": "string",
+    "email": "string"
+  },
+  "createdAt": "date",
+  "updatedAt": "date"
+}
+```
+
+#### `DELETE /api/stalls/:id`
+Delete stall - Requires authentication and admin privileges
+
+**Response:**
+```json
+{
+  "message": "Stall removed"
+}
+```
+
+#### `GET /api/stalls/my`
+Get stalls by owner - Requires authentication (Stall Owners only)
+
+**Response:**
+```json
+[
+  {
+    "_id": "string",
+    "name": "string",
+    "description": "string",
+    "owner": "string",
+    "category": "string",
+    "rent": "number",
+    "isActive": "boolean",
+    "image": "string",
+    "location": "string",
+    "contactInfo": {
+      "phone": "string",
+      "email": "string"
+    },
+    "createdAt": "date",
+    "updatedAt": "date"
+  }
+]
+```
+
+### Menu Routes
+
+#### `GET /api/menu/stall/:stallId`
+Get all menu items for a stall
+
+**Response:**
+```json
+[
+  {
+    "_id": "string",
+    "name": "string",
+    "description": "string",
+    "price": "number",
+    "stall": "string",
+    "category": "string",
+    "stock": "number",
+    "image": "string",
+    "isActive": "boolean",
+    "preparationTime": "number",
+    "createdAt": "date",
+    "updatedAt": "date"
+  }
+]
+```
+
+#### `GET /api/menu/:id`
+Get single menu item by ID
+
+**Response:**
+```json
+{
+  "_id": "string",
+  "name": "string",
+  "description": "string",
+  "price": "number",
+  "stall": "string",
+  "category": "string",
+  "stock": "number",
+  "image": "string",
+  "isActive": "boolean",
+  "preparationTime": "number",
+  "createdAt": "date",
+  "updatedAt": "date"
+}
+```
+
+#### `POST /api/menu`
+Create new menu item - Requires authentication (Stall Owners only)
+
+**Request Body:**
+```json
+{
+  "name": "string",
+  "description": "string",
+  "price": "number",
+  "stall": "string",
+  "category": "string",
+  "stock": "number",
+  "preparationTime": "number"
+}
+```
+
+**Response:**
+```json
+{
+  "_id": "string",
+  "name": "string",
+  "description": "string",
+  "price": "number",
+  "stall": "string",
+  "category": "string",
+  "stock": "number",
+  "image": "string",
+  "isActive": "boolean",
+  "preparationTime": "number",
+  "createdAt": "date",
+  "updatedAt": "date"
+}
+```
+
+#### `PUT /api/menu/:id`
+Update menu item - Requires authentication (Stall Owners only)
+
+**Request Body:**
+```json
+{
+  "name": "string",
+  "description": "string",
+  "price": "number",
+  "category": "string",
+  "stock": "number",
+  "isActive": "boolean",
+  "preparationTime": "number"
+}
+```
+
+**Response:**
+```json
+{
+  "_id": "string",
+  "name": "string",
+  "description": "string",
+  "price": "number",
+  "stall": "string",
+  "category": "string",
+  "stock": "number",
+  "image": "string",
+  "isActive": "boolean",
+  "preparationTime": "number",
+  "createdAt": "date",
+  "updatedAt": "date"
+}
+```
+
+#### `DELETE /api/menu/:id`
+Delete menu item - Requires authentication (Stall Owners only)
+
+**Response:**
+```json
+{
+  "message": "Menu item removed"
+}
+```
+
+#### `GET /api/menu/category/:category`
+Get menu items by category
+
+**Response:**
+```json
+[
+  {
+    "_id": "string",
+    "name": "string",
+    "description": "string",
+    "price": "number",
+    "stall": {
+      "_id": "string",
+      "name": "string"
+    },
+    "category": "string",
+    "stock": "number",
+    "image": "string",
+    "isActive": "boolean",
+    "preparationTime": "number",
+    "createdAt": "date",
+    "updatedAt": "date"
+  }
+]
+```
+
 ## Authentication
 
 The API uses JWT (JSON Web Tokens) for authentication:
@@ -270,6 +601,36 @@ The API uses JWT (JSON Web Tokens) for authentication:
 
 **Methods:**
 - `comparePassword`: Compares plain text password with hashed password
+
+### Stall Model
+
+**Fields:**
+- `name`: String (required)
+- `description`: String
+- `owner`: ObjectId (ref to User, required)
+- `category`: String (required)
+- `rent`: Number (required, min: 0)
+- `isActive`: Boolean (default: true)
+- `image`: String (URL to stall image)
+- `location`: String
+- `contactInfo`: Object
+  - `phone`: String
+  - `email`: String
+- `timestamps`: CreatedAt and UpdatedAt
+
+### MenuItem Model
+
+**Fields:**
+- `name`: String (required)
+- `description`: String
+- `price`: Number (required, min: 0)
+- `stall`: ObjectId (ref to Stall, required)
+- `category`: String (required)
+- `stock`: Number (required, min: 0, default: 0)
+- `image`: String (URL to item image)
+- `isActive`: Boolean (default: true)
+- `preparationTime`: Number (in minutes, default: 10)
+- `timestamps`: CreatedAt and UpdatedAt
 
 ## Environment Variables
 
