@@ -1,100 +1,82 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { userAPI } from '../../services/api';
+import { subscribeToOrderUpdates, joinUserRoom } from '../../services/socket';
 import './orders.css';
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    // TODO: Fetch orders from API
-    // Mock data for now
-    const mockOrders = [
-      {
-        _id: '1',
-        orderNumber: 'ORD-001',
-        items: [
+    const fetchOrders = async () => {
+      try {
+        setLoading(true);
+        const response = await userAPI.getProfile();
+        const customerId = response.data._id;
+        
+        // Join user room for real-time updates
+        joinUserRoom(customerId);
+        
+        // Fetch orders
+        const ordersResponse = await userAPI.getAllUsers(); // This should be replaced with proper orders API
+        // For now, we'll use mock data
+        const mockOrders = [
           {
-            menuItem: {
-              name: 'Classic Burger',
-              stall: {
-                name: 'Burger Palace'
-              }
-            },
-            quantity: 2,
-            price: 8.99
+            _id: '1',
+            orderNumber: 'ORD-001',
+            items: [
+              { name: 'Burger', quantity: 2, price: 12.99 },
+              { name: 'Fries', quantity: 1, price: 4.99 }
+            ],
+            totalAmount: 34.97,
+            status: 'Pending',
+            createdAt: '2023-05-15T10:30:00Z'
           },
           {
-            menuItem: {
-              name: 'French Fries',
-              stall: {
-                name: 'Burger Palace'
-              }
-            },
-            quantity: 1,
-            price: 3.99
+            _id: '2',
+            orderNumber: 'ORD-002',
+            items: [
+              { name: 'Pizza', quantity: 1, price: 18.99 }
+            ],
+            totalAmount: 18.99,
+            status: 'Preparing',
+            createdAt: '2023-05-14T14:20:00Z'
           }
-        ],
-        totalAmount: 24.97,
-        status: 'Delivered',
-        createdAt: '2023-05-15T10:30:00Z'
-      },
-      {
-        _id: '2',
-        orderNumber: 'ORD-002',
-        items: [
-          {
-            menuItem: {
-              name: 'Cheese Pizza',
-              stall: {
-                name: 'Pizza Corner'
-              }
-            },
-            quantity: 1,
-            price: 12.99
-          }
-        ],
-        totalAmount: 12.99,
-        status: 'Preparing',
-        createdAt: '2023-05-18T14:20:00Z'
-      },
-      {
-        _id: '3',
-        orderNumber: 'ORD-003',
-        items: [
-          {
-            menuItem: {
-              name: 'Chicken Biryani',
-              stall: {
-                name: 'Indian Spice'
-              }
-            },
-            quantity: 1,
-            price: 10.99
-          },
-          {
-            menuItem: {
-              name: 'Garlic Naan',
-              stall: {
-                name: 'Indian Spice'
-              }
-            },
-            quantity: 2,
-            price: 2.99
-          }
-        ],
-        totalAmount: 19.97,
-        status: 'Completed',
-        createdAt: '2023-05-10T12:15:00Z'
+        ];
+        setOrders(mockOrders);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
-    ];
+    };
 
-    setTimeout(() => {
-      setOrders(mockOrders);
-      setLoading(false);
-    }, 1000);
-  }, []);
+    fetchOrders();
+    
+    // Subscribe to real-time order updates
+    const unsubscribe = subscribeToOrderUpdates((data) => {
+      console.log('Received order update:', data);
+      // Update the specific order in state
+      setOrders(prevOrders => 
+        prevOrders.map(order => 
+          order._id === data.orderId 
+            ? { ...order, status: data.status } 
+            : order
+        )
+      );
+    });
+
+    // Cleanup subscription on component unmount
+    return () => {
+      unsubscribe();
+    };
+  }, [user]);
 
   const getStatusClass = (status) => {
     switch (status) {
@@ -115,31 +97,24 @@ const OrdersPage = () => {
     }
   };
 
-  if (loading) {
-    return <div className="orders-page">Loading orders...</div>;
-  }
-
-  if (error) {
-    return <div className="orders-page">Error: {error}</div>;
-  }
+  if (loading) return <div className="loading">Loading orders...</div>;
+  if (error) return <div className="error">Error: {error}</div>;
 
   return (
     <div className="orders-page">
-      <div className="orders-header">
+      <div className="page-header">
         <h1>My Orders</h1>
+        <p>Track your recent orders and their status</p>
       </div>
 
       {orders.length === 0 ? (
-        <div className="empty-orders">
-          <h2>You haven't placed any orders yet</h2>
-          <p>Start ordering delicious food from our stalls!</p>
-          <Link to="/stalls" className="browse-stalls-btn">
-            Browse Stalls
-          </Link>
+        <div className="no-orders">
+          <p>You haven't placed any orders yet.</p>
+          <Link to="/stalls" className="btn btn-primary">Browse Stalls</Link>
         </div>
       ) : (
         <div className="orders-list">
-          {orders.map((order) => (
+          {orders.map(order => (
             <div key={order._id} className="order-card">
               <div className="order-header">
                 <div className="order-info">
@@ -148,31 +123,29 @@ const OrdersPage = () => {
                     {new Date(order.createdAt).toLocaleDateString()}
                   </p>
                 </div>
-                <div className={`order-status ${getStatusClass(order.status)}`}>
-                  {order.status}
+                <div className="order-status">
+                  <span className={`status-badge ${getStatusClass(order.status)}`}>
+                    {order.status}
+                  </span>
                 </div>
               </div>
               
               <div className="order-items">
                 {order.items.map((item, index) => (
                   <div key={index} className="order-item">
-                    <div className="item-details">
-                      <h4>{item.menuItem.name}</h4>
-                      <p className="stall-name">{item.menuItem.stall.name}</p>
-                    </div>
-                    <div className="item-quantity">x{item.quantity}</div>
-                    <div className="item-price">
-                      ${(item.quantity * item.price).toFixed(2)}
-                    </div>
+                    <span className="item-name">{item.name}</span>
+                    <span className="item-quantity">x{item.quantity}</span>
+                    <span className="item-price">${(item.price * item.quantity).toFixed(2)}</span>
                   </div>
                 ))}
               </div>
               
-              <div className="order-footer">
-                <div className="order-total">
-                  Total: <span>${order.totalAmount.toFixed(2)}</span>
-                </div>
-                <Link to={`/orders/${order._id}`} className="view-details-btn">
+              <div className="order-total">
+                <strong>Total: ${order.totalAmount.toFixed(2)}</strong>
+              </div>
+              
+              <div className="order-actions">
+                <Link to={`/orders/${order._id}`} className="btn btn-secondary">
                   View Details
                 </Link>
               </div>
