@@ -123,28 +123,28 @@ const AdminDashboard = () => {
 
   if (loading) {
     return (
-      <div className="admin-dashboard">
-        <div className="loading">Loading dashboard data...</div>
+      <div className="admin-dashboard" role="main">
+        <div className="loading" aria-live="polite">Loading dashboard data...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="admin-dashboard">
-        <div className="error">Error loading dashboard: {error}</div>
+      <div className="admin-dashboard" role="main">
+        <div className="error" role="alert">Error loading dashboard: {error}</div>
       </div>
     );
   }
 
   return (
-    <div className="admin-dashboard">
+    <div className="admin-dashboard" role="main">
       <div className="dashboard-header">
         <h1>Admin Dashboard</h1>
         <p>Welcome back! Here's what's happening today.</p>
       </div>
 
-      <div className="dashboard-stats">
+      <div className="dashboard-stats" role="region" aria-label="Dashboard statistics">
         <div className="stat-card">
           <h3>Total Stalls</h3>
           <p className="stat-value">{stats.totalStalls}</p>
@@ -164,49 +164,47 @@ const AdminDashboard = () => {
       </div>
 
       <div className="dashboard-content">
-        <div className="dashboard-section">
+        <div className="dashboard-section" role="region" aria-labelledby="recent-orders-heading">
           <div className="section-header">
-            <h2>Recent Orders</h2>
+            <h2 id="recent-orders-heading">Recent Orders</h2>
             <Link to="/orders/manage" className="view-all-link">View All</Link>
           </div>
-          <div className="orders-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Order #</th>
-                  <th>Customer</th>
-                  <th>Amount</th>
-                  <th>Status</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentOrders.map(order => (
-                  <tr key={order._id}>
-                    <td>{order.orderNumber}</td>
-                    <td>{order.customer}</td>
-                    <td>${order.totalAmount.toFixed(2)}</td>
-                    <td>
-                      <span className={`status-badge ${getStatusClass(order.status)}`}>
-                        {order.status}
-                      </span>
-                    </td>
-                    <td>{new Date(order.createdAt).toLocaleDateString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="orders-table" role="table" aria-label="Recent orders table">
+            <div role="rowgroup">
+              <div role="row">
+                <div role="columnheader">Order #</div>
+                <div role="columnheader">Customer</div>
+                <div role="columnheader">Amount</div>
+                <div role="columnheader">Status</div>
+                <div role="columnheader">Date</div>
+              </div>
+            </div>
+            <div role="rowgroup">
+              {recentOrders.map(order => (
+                <div role="row" key={order._id}>
+                  <div role="cell">{order.orderNumber}</div>
+                  <div role="cell">{order.customer}</div>
+                  <div role="cell">${order.totalAmount.toFixed(2)}</div>
+                  <div role="cell">
+                    <span className={`status-badge ${getStatusClass(order.status)}`} aria-label={`Status: ${order.status}`}>
+                      {order.status}
+                    </span>
+                  </div>
+                  <div role="cell">{new Date(order.createdAt).toLocaleDateString()}</div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="dashboard-section">
+        <div className="dashboard-section" role="region" aria-labelledby="top-stalls-heading">
           <div className="section-header">
-            <h2>Top Performing Stalls</h2>
+            <h2 id="top-stalls-heading">Top Performing Stalls</h2>
             <Link to="/reports" className="view-all-link">View Reports</Link>
           </div>
-          <div className="stalls-list">
+          <div className="stalls-list" role="list">
             {topStalls.map(stall => (
-              <div key={stall._id} className="stall-item">
+              <div role="listitem" key={stall._id} className="stall-item">
                 <div className="stall-info">
                   <h3>{stall.name}</h3>
                   <p>{stall.orders} orders</p>

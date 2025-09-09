@@ -97,11 +97,20 @@ const OrdersPage = () => {
     }
   };
 
-  if (loading) return <div className="loading">Loading orders...</div>;
-  if (error) return <div className="error">Error: {error}</div>;
+  if (loading) return (
+    <div className="orders-page" role="main">
+      <div className="loading" aria-live="polite">Loading orders...</div>
+    </div>
+  );
+  
+  if (error) return (
+    <div className="orders-page" role="main">
+      <div className="error" role="alert">Error: {error}</div>
+    </div>
+  );
 
   return (
-    <div className="orders-page">
+    <div className="orders-page" role="main">
       <div className="page-header">
         <h1>My Orders</h1>
         <p>Track your recent orders and their status</p>
@@ -113,9 +122,9 @@ const OrdersPage = () => {
           <Link to="/stalls" className="btn btn-primary">Browse Stalls</Link>
         </div>
       ) : (
-        <div className="orders-list">
+        <div className="orders-list" role="list">
           {orders.map(order => (
-            <div key={order._id} className="order-card">
+            <div role="listitem" key={order._id} className="order-card">
               <div className="order-header">
                 <div className="order-info">
                   <h3>Order #{order.orderNumber}</h3>
@@ -124,15 +133,15 @@ const OrdersPage = () => {
                   </p>
                 </div>
                 <div className="order-status">
-                  <span className={`status-badge ${getStatusClass(order.status)}`}>
+                  <span className={`status-badge ${getStatusClass(order.status)}`} aria-label={`Status: ${order.status}`}>
                     {order.status}
                   </span>
                 </div>
               </div>
               
-              <div className="order-items">
+              <div className="order-items" role="list">
                 {order.items.map((item, index) => (
-                  <div key={index} className="order-item">
+                  <div role="listitem" key={index} className="order-item">
                     <span className="item-name">{item.name}</span>
                     <span className="item-quantity">x{item.quantity}</span>
                     <span className="item-price">${(item.price * item.quantity).toFixed(2)}</span>

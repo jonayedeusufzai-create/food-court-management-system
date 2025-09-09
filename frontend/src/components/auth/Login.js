@@ -55,14 +55,14 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container">
-      <div className="auth-card">
+    <div className="login-container" role="main">
+      <div className="auth-card" role="form" aria-labelledby="login-heading">
         <div className="auth-header">
-          <h2>Welcome Back</h2>
+          <h2 id="login-heading">Welcome Back</h2>
           <p>Sign in to your FoodCourtExpress account</p>
         </div>
         
-        <form onSubmit={onSubmit} className="auth-form">
+        <form onSubmit={onSubmit} className="auth-form" noValidate>
           <div className="form-group">
             <label htmlFor="email">Email Address</label>
             <input
@@ -72,8 +72,14 @@ const Login = () => {
               value={email}
               onChange={onChange}
               required
+              aria-describedby={errors.email ? "email-error" : undefined}
+              aria-invalid={errors.email ? "true" : "false"}
             />
-            {errors.email && <span className="error-text">{errors.email}</span>}
+            {errors.email && (
+              <span id="email-error" className="error-text" role="alert">
+                {errors.email}
+              </span>
+            )}
           </div>
           
           <div className="form-group">
@@ -86,14 +92,21 @@ const Login = () => {
               onChange={onChange}
               minLength="6"
               required
+              aria-describedby={errors.password ? "password-error" : undefined}
+              aria-invalid={errors.password ? "true" : "false"}
             />
-            {errors.password && <span className="error-text">{errors.password}</span>}
+            {errors.password && (
+              <span id="password-error" className="error-text" role="alert">
+                {errors.password}
+              </span>
+            )}
           </div>
           
           <button 
             type="submit" 
             className="btn btn-primary auth-btn"
             disabled={loading}
+            aria-busy={loading}
           >
             {loading ? 'Signing In...' : 'Sign In'}
           </button>
