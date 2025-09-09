@@ -1,17 +1,15 @@
 const express = require('express');
-const {
-  registerUser,
-  loginUser,
-  verifyEmail,
-  registerAdmin
-} = require('../controllers/authController');
-const { protect, admin } = require('../middleware/authMiddleware');
+const { registerUser, loginUser, verifyEmail, registerAdmin } = require('../controllers/authController');
+const { authLimiter } = require('../middleware/securityMiddleware');
 
 const router = express.Router();
 
-router.post('/register', registerUser);
-router.post('/login', loginUser);
-router.get('/verify/:token', verifyEmail);
-router.post('/admin/register', protect, admin, registerAdmin);
+// Apply rate limiting to authentication routes
+router.use(authLimiter);
+
+router.route('/register').post(registerUser);
+router.route('/login').post(loginUser);
+router.route('/verify/:token').get(verifyEmail);
+router.route('/admin/register').post(registerAdmin);
 
 module.exports = router;

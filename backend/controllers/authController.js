@@ -4,21 +4,27 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const { body, validationResult } = require('express-validator');
 const { sendVerificationEmail } = require('../services/emailService');
+const { validatePasswordStrength } = require('../utils/passwordValidator');
 
 // Validation middleware for registration
 const validateRegistration = [
   body('name')
     .notEmpty()
     .withMessage('Name is required')
-    .isLength({ min: 2 })
-    .withMessage('Name must be at least 2 characters long'),
+    .isLength({ min: 2, max: 50 })
+    .withMessage('Name must be between 2 and 50 characters long'),
   body('email')
     .isEmail()
     .withMessage('Please provide a valid email')
     .normalizeEmail(),
   body('password')
-    .isLength({ min: 6 })
-    .withMessage('Password must be at least 6 characters long'),
+    .custom((value) => {
+      const passwordValidation = validatePasswordStrength(value);
+      if (!passwordValidation.isValid) {
+        throw new Error(passwordValidation.message);
+      }
+      return true;
+    }),
   body('role')
     .optional()
     .isIn(['Customer', 'StallOwner', 'FoodCourtOwner'])
@@ -131,7 +137,7 @@ const loginUser = [
       const { email, password } = req.body;
 
       // Check for user email
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ email }).select('+password');
 
       if (user && (await user.comparePassword(password))) {
         res.json({
@@ -180,15 +186,20 @@ const validateAdminRegistration = [
   body('name')
     .notEmpty()
     .withMessage('Name is required')
-    .isLength({ min: 2 })
-    .withMessage('Name must be at least 2 characters long'),
+    .isLength({ min: 2, max: 50 })
+    .withMessage('Name must be between 2 and 50 characters long'),
   body('email')
     .isEmail()
     .withMessage('Please provide a valid email')
     .normalizeEmail(),
   body('password')
-    .isLength({ min: 6 })
-    .withMessage('Password must be at least 6 characters long'),
+    .custom((value) => {
+      const passwordValidation = validatePasswordStrength(value);
+      if (!passwordValidation.isValid) {
+        throw new Error(passwordValidation.message);
+      }
+      return true;
+    }),
   body('role')
     .optional()
     .isIn(['StallOwner', 'FoodCourtOwner'])

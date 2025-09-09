@@ -3,8 +3,10 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
+const helmet = require('helmet');
 const http = require('http');
 const { Server } = require('socket.io');
+const { RateLimiterMemory } = require('rate-limiter-flexible');
 
 // Load environment variables
 dotenv.config();
@@ -24,11 +26,42 @@ const analyticsRoutes = require('./routes/analyticsRoutes');
 const app = express();
 const server = http.createServer(app);
 
+// Rate limiting
+const rateLimiter = new RateLimiterMemory({
+  points: 100, // 100 requests
+  duration: 15 * 60, // per 15 minutes
+});
+
+const rateLimiterMiddleware = (req, res, next) => {
+  rateLimiter.consume(req.ip)
+    .then(() => {
+      next();
+    })
+    .catch(() => {
+      res.status(429).json({ message: 'Too many requests, please try again later.' });
+    });
+};
+
+// Apply rate limiting to all requests
+app.use(rateLimiterMiddleware);
+
+// Security headers
+app.use(helmet());
+
+// CORS configuration
+app.use(cors({
+  origin: process.env.FRONTEND_URL || "http://localhost:3000",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
 // Initialize Socket.IO
 const io = new Server(server, {
   cors: {
     origin: process.env.FRONTEND_URL || "http://localhost:3000",
-    methods: ["GET", "POST"]
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 
@@ -71,8 +104,8 @@ io.on('connection', (socket) => {
 });
 
 // Middleware
-app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' })); // Limit request size
+app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
 // Routes
