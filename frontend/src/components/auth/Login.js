@@ -10,6 +10,7 @@ const Login = () => {
     password: '',
   });
 
+  const [errors, setErrors] = useState({});
   const { email, password } = formData;
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -21,17 +22,34 @@ const Login = () => {
     }
 
     if (error) {
-      alert(error);
+      // Handle validation errors
+      if (error.errors) {
+        const validationErrors = {};
+        error.errors.forEach(err => {
+          validationErrors[err.param] = err.msg;
+        });
+        setErrors(validationErrors);
+      } else {
+        alert(error);
+      }
       dispatch(clearErrors());
     }
   }, [isAuthenticated, error, navigate, dispatch]);
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    
+    // Clear error when user starts typing
+    if (errors[e.target.name]) {
+      setErrors({ ...errors, [e.target.name]: '' });
+    }
   };
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    
+    // Clear previous errors
+    setErrors({});
     
     dispatch(loginUser({ email, password }));
   };
@@ -55,6 +73,7 @@ const Login = () => {
               onChange={onChange}
               required
             />
+            {errors.email && <span className="error-text">{errors.email}</span>}
           </div>
           
           <div className="form-group">
@@ -68,6 +87,7 @@ const Login = () => {
               minLength="6"
               required
             />
+            {errors.password && <span className="error-text">{errors.password}</span>}
           </div>
           
           <button 

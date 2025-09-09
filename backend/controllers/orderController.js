@@ -1,31 +1,74 @@
 const Order = require('../models/Order');
+const { body, validationResult } = require('express-validator');
 const { io, connectedUsers } = require('../server');
+
+// Validation middleware for creating orders
+const validateOrder = [
+  body('items')
+    .isArray({ min: 1 })
+    .withMessage('Order must have at least one item'),
+  body('items.*.name')
+    .notEmpty()
+    .withMessage('Item name is required'),
+  body('items.*.quantity')
+    .isInt({ min: 1 })
+    .withMessage('Item quantity must be at least 1'),
+  body('items.*.price')
+    .isFloat({ min: 0 })
+    .withMessage('Item price must be a positive number'),
+  body('totalAmount')
+    .isFloat({ min: 0 })
+    .withMessage('Total amount must be a positive number'),
+  body('deliveryAddress')
+    .isObject()
+    .withMessage('Delivery address is required'),
+  body('deliveryAddress.street')
+    .notEmpty()
+    .withMessage('Street address is required'),
+  body('deliveryAddress.city')
+    .notEmpty()
+    .withMessage('City is required')
+];
+
+// Validation middleware for updating order status
+const validateOrderStatus = [
+  body('status')
+    .isIn(['Pending', 'Preparing', 'Ready', 'Delivered', 'Completed', 'Cancelled'])
+    .withMessage('Invalid order status')
+];
 
 // @desc    Create new order
 // @route   POST /api/orders
 // @access  Private
-const createOrder = async (req, res) => {
-  try {
-    const { items, totalAmount, deliveryAddress } = req.body;
-    
-    // Validate items
-    if (!items || items.length === 0) {
-      return res.status(400).json({ message: 'Order must have items' });
+const createOrder = [
+  validateOrder,
+  async (req, res) => {
+    try {
+      // Check for validation errors
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ 
+          message: 'Validation failed',
+          errors: errors.array()
+        });
+      }
+
+      const { items, totalAmount, deliveryAddress } = req.body;
+      
+      // Create order
+      const order = await Order.create({
+        customer: req.user._id,
+        items,
+        totalAmount,
+        deliveryAddress
+      });
+      
+      res.status(201).json(order);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
-    
-    // Create order
-    const order = await Order.create({
-      customer: req.user._id,
-      items,
-      totalAmount,
-      deliveryAddress
-    });
-    
-    res.status(201).json(order);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
   }
-};
+];
 
 // @desc    Get all orders
 // @route   GET /api/orders
@@ -64,45 +107,57 @@ const getOrderById = async (req, res) => {
 // @desc    Update order status
 // @route   PUT /api/orders/:id/status
 // @access  Private
-const updateOrderStatus = async (req, res) => {
-  try {
-    const { status } = req.body;
-    
-    const order = await Order.findById(req.params.id).populate('customer', 'name email');
-    
-    if (order) {
-      // Check if user is authorized to update this order
-      if (req.user.role !== 'FoodCourtOwner' && req.user.role !== 'StallOwner') {
-        return res.status(401).json({ message: 'Not authorized to update this order' });
+const updateOrderStatus = [
+  validateOrderStatus,
+  async (req, res) => {
+    try {
+      // Check for validation errors
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ 
+          message: 'Validation failed',
+          errors: errors.array()
+        });
       }
+
+      const { status } = req.body;
       
-      order.status = status;
-      const updatedOrder = await order.save();
+      const order = await Order.findById(req.params.id).populate('customer', 'name email');
       
-      // Emit real-time event for order status update
-      const orderData = {
-        orderId: updatedOrder._id,
-        status: updatedOrder.status,
-        userId: updatedOrder.customer._id
-      };
-      
-      // Emit to all connected clients
-      io.emit('order_status_updated', orderData);
-      
-      // Also emit to specific user if connected
-      if (connectedUsers.has(updatedOrder.customer._id.toString())) {
-        const userSocketId = connectedUsers.get(updatedOrder.customer._id.toString());
-        io.to(userSocketId).emit('order_status_updated', orderData);
+      if (order) {
+        // Check if user is authorized to update this order
+        if (req.user.role !== 'FoodCourtOwner' && req.user.role !== 'StallOwner') {
+          return res.status(401).json({ message: 'Not authorized to update this order' });
+        }
+        
+        order.status = status;
+        const updatedOrder = await order.save();
+        
+        // Emit real-time event for order status update
+        const orderData = {
+          orderId: updatedOrder._id,
+          status: updatedOrder.status,
+          userId: updatedOrder.customer._id
+        };
+        
+        // Emit to all connected clients
+        io.emit('order_status_updated', orderData);
+        
+        // Also emit to specific user if connected
+        if (connectedUsers.has(updatedOrder.customer._id.toString())) {
+          const userSocketId = connectedUsers.get(updatedOrder.customer._id.toString());
+          io.to(userSocketId).emit('order_status_updated', orderData);
+        }
+        
+        res.json(updatedOrder);
+      } else {
+        res.status(404).json({ message: 'Order not found' });
       }
-      
-      res.json(updatedOrder);
-    } else {
-      res.status(404).json({ message: 'Order not found' });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
-  } catch (error) {
-    res.status(500).json({ message: error.message });
   }
-};
+];
 
 // @desc    Get orders by customer
 // @route   GET /api/orders/customer/:customerId

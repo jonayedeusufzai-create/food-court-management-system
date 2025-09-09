@@ -2,7 +2,43 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+const { body, validationResult } = require('express-validator');
 const { sendVerificationEmail } = require('../services/emailService');
+
+// Validation middleware for registration
+const validateRegistration = [
+  body('name')
+    .notEmpty()
+    .withMessage('Name is required')
+    .isLength({ min: 2 })
+    .withMessage('Name must be at least 2 characters long'),
+  body('email')
+    .isEmail()
+    .withMessage('Please provide a valid email')
+    .normalizeEmail(),
+  body('password')
+    .isLength({ min: 6 })
+    .withMessage('Password must be at least 6 characters long'),
+  body('role')
+    .optional()
+    .isIn(['Customer', 'StallOwner', 'FoodCourtOwner'])
+    .withMessage('Invalid role'),
+  body('phone')
+    .optional()
+    .isMobilePhone()
+    .withMessage('Please provide a valid phone number')
+];
+
+// Validation middleware for login
+const validateLogin = [
+  body('email')
+    .isEmail()
+    .withMessage('Please provide a valid email')
+    .normalizeEmail(),
+  body('password')
+    .notEmpty()
+    .withMessage('Password is required')
+];
 
 // Generate JWT token
 const generateToken = (id) => {
@@ -14,82 +50,106 @@ const generateToken = (id) => {
 // @desc    Register new user
 // @route   POST /api/auth/register
 // @access  Public
-const registerUser = async (req, res) => {
-  try {
-    const { name, email, password, role, phone, address } = req.body;
-
-    // Check if user exists
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
-    }
-
-    // Create user
-    const user = await User.create({
-      name,
-      email,
-      password,
-      role: role || 'Customer',
-      phone,
-      address
-    });
-
-    if (user) {
-      // Generate verification token
-      const verificationToken = crypto.randomBytes(20).toString('hex');
-      user.verificationToken = verificationToken;
-      await user.save();
-
-      // Send verification email
-      try {
-        await sendVerificationEmail(user.email, verificationToken);
-      } catch (emailError) {
-        console.error('Failed to send verification email:', emailError);
-        // Don't fail the registration if email sending fails
+const registerUser = [
+  validateRegistration,
+  async (req, res) => {
+    try {
+      // Check for validation errors
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ 
+          message: 'Validation failed',
+          errors: errors.array()
+        });
       }
 
-      res.status(201).json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        isVerified: user.isVerified,
-        token: generateToken(user._id)
+      const { name, email, password, role, phone, address } = req.body;
+
+      // Check if user exists
+      const userExists = await User.findOne({ email });
+      if (userExists) {
+        return res.status(400).json({ message: 'User already exists' });
+      }
+
+      // Create user
+      const user = await User.create({
+        name,
+        email,
+        password,
+        role: role || 'Customer',
+        phone,
+        address
       });
-    } else {
-      res.status(400).json({ message: 'Invalid user data' });
+
+      if (user) {
+        // Generate verification token
+        const verificationToken = crypto.randomBytes(20).toString('hex');
+        user.verificationToken = verificationToken;
+        await user.save();
+
+        // Send verification email
+        try {
+          await sendVerificationEmail(user.email, verificationToken);
+        } catch (emailError) {
+          console.error('Failed to send verification email:', emailError);
+          // Don't fail the registration if email sending fails
+        }
+
+        res.status(201).json({
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          isVerified: user.isVerified,
+          token: generateToken(user._id)
+        });
+      } else {
+        res.status(400).json({ message: 'Invalid user data' });
+      }
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
-  } catch (error) {
-    res.status(500).json({ message: error.message });
   }
-};
+];
 
 // @desc    Authenticate user & get token
 // @route   POST /api/auth/login
 // @access  Public
-const loginUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+const loginUser = [
+  validateLogin,
+  async (req, res) => {
+    try {
+      // Check for validation errors
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ 
+          message: 'Validation failed',
+          errors: errors.array()
+        });
+      }
 
-    // Check for user email
-    const user = await User.findOne({ email });
+      const { email, password } = req.body;
 
-    if (user && (await user.comparePassword(password))) {
-      res.json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        isVerified: user.isVerified,
-        token: generateToken(user._id)
-      });
-    } else {
-      res.status(401).json({ message: 'Invalid email or password' });
+      // Check for user email
+      const user = await User.findOne({ email });
+
+      if (user && (await user.comparePassword(password))) {
+        res.json({
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          isVerified: user.isVerified,
+          token: generateToken(user._id)
+        });
+      } else {
+        res.status(401).json({ message: 'Invalid email or password' });
+      }
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
-  } catch (error) {
-    res.status(500).json({ message: error.message });
   }
-};
+];
 
 // @desc    Verify user email
 // @route   GET /api/auth/verify/:token
@@ -115,55 +175,87 @@ const verifyEmail = async (req, res) => {
   }
 };
 
+// Validation middleware for admin registration
+const validateAdminRegistration = [
+  body('name')
+    .notEmpty()
+    .withMessage('Name is required')
+    .isLength({ min: 2 })
+    .withMessage('Name must be at least 2 characters long'),
+  body('email')
+    .isEmail()
+    .withMessage('Please provide a valid email')
+    .normalizeEmail(),
+  body('password')
+    .isLength({ min: 6 })
+    .withMessage('Password must be at least 6 characters long'),
+  body('role')
+    .optional()
+    .isIn(['StallOwner', 'FoodCourtOwner'])
+    .withMessage('Invalid admin role')
+];
+
 // @desc    Register admin user (Food Court Owner)
 // @route   POST /api/auth/admin/register
 // @access  Private/Admin
-const registerAdmin = async (req, res) => {
-  try {
-    const { name, email, password, role } = req.body;
-
-    // Check if user exists
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
-    }
-
-    // Create admin user
-    const user = await User.create({
-      name,
-      email,
-      password,
-      role: role || 'FoodCourtOwner'
-    });
-
-    if (user) {
-      // Generate verification token
-      const verificationToken = crypto.randomBytes(20).toString('hex');
-      user.verificationToken = verificationToken;
-      await user.save();
-
-      // Send verification email
-      try {
-        await sendVerificationEmail(user.email, verificationToken);
-      } catch (emailError) {
-        console.error('Failed to send verification email:', emailError);
-        // Don't fail the registration if email sending fails
+const registerAdmin = [
+  validateAdminRegistration,
+  async (req, res) => {
+    try {
+      // Check for validation errors
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ 
+          message: 'Validation failed',
+          errors: errors.array()
+        });
       }
 
-      res.status(201).json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        isVerified: user.isVerified
+      const { name, email, password, role } = req.body;
+
+      // Check if user exists
+      const userExists = await User.findOne({ email });
+      if (userExists) {
+        return res.status(400).json({ message: 'User already exists' });
+      }
+
+      // Create admin user
+      const user = await User.create({
+        name,
+        email,
+        password,
+        role: role || 'FoodCourtOwner'
       });
-    } else {
-      res.status(400).json({ message: 'Invalid user data' });
+
+      if (user) {
+        // Generate verification token
+        const verificationToken = crypto.randomBytes(20).toString('hex');
+        user.verificationToken = verificationToken;
+        await user.save();
+
+        // Send verification email
+        try {
+          await sendVerificationEmail(user.email, verificationToken);
+        } catch (emailError) {
+          console.error('Failed to send verification email:', emailError);
+          // Don't fail the registration if email sending fails
+        }
+
+        res.status(201).json({
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          isVerified: user.isVerified
+        });
+      } else {
+        res.status(400).json({ message: 'Invalid user data' });
+      }
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
-  } catch (error) {
-    res.status(500).json({ message: error.message });
   }
-};
+];
 
 module.exports = {
   registerUser,
