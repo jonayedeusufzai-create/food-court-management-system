@@ -1,26 +1,28 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import './dashboard.css';
 
 const FoodCourtOwnerDashboard = () => {
   return (
     <div className="dashboard">
       <h1>Food Court Owner Dashboard</h1>
-      <div className="dashboard-content">
-        <div className="dashboard-section">
-          <h2>Manage Stalls</h2>
-          <p>Add, edit, or remove stalls from the food court</p>
-        </div>
-        <div className="dashboard-section">
-          <h2>Rent & Bill Management</h2>
-          <p>Track rent payments and utility bills</p>
-        </div>
-        <div className="dashboard-section">
-          <h2>Performance Reports</h2>
+      <p>Welcome! Manage your food court operations from here.</p>
+      
+      <div className="dashboard-links">
+        <Link to="/stalls/manage" className="dashboard-link">
+          <h3>Stall Management</h3>
+          <p>View, add, edit, and remove stalls</p>
+        </Link>
+        
+        <Link to="/reports" className="dashboard-link">
+          <h3>Reports & Analytics</h3>
           <p>Generate sales and performance reports</p>
-        </div>
-        <div className="dashboard-section">
-          <h2>Stall Ranking</h2>
-          <p>View ranked performance of all stalls</p>
-        </div>
+        </Link>
+        
+        <Link to="/analytics" className="dashboard-link">
+          <h3>Analytics Dashboard</h3>
+          <p>View real-time analytics and insights</p>
+        </Link>
       </div>
     </div>
   );

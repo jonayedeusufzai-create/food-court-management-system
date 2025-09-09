@@ -2,11 +2,12 @@ import axios from 'axios';
 
 // Create an axios instance
 const API = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api',
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5001/api',
 });
 
 // Add a request interceptor to include the token in headers
 API.interceptors.request.use((config) => {
+  console.log('Making API request:', config);
   const token = localStorage.getItem('token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -14,9 +15,24 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
+// Add a response interceptor to handle errors
+API.interceptors.response.use(
+  (response) => {
+    console.log('API response:', response);
+    return response;
+  },
+  (error) => {
+    console.error('API error:', error);
+    return Promise.reject(error);
+  }
+);
+
 // Auth API calls
 export const authAPI = {
-  register: (userData) => API.post('/auth/register', userData),
+  register: (userData) => {
+    console.log('Calling register API with data:', userData);
+    return API.post('/auth/register', userData);
+  },
   login: (userData) => API.post('/auth/login', userData),
   verifyEmail: (token) => API.get(`/auth/verify/${token}`),
   registerAdmin: (userData) => API.post('/auth/admin/register', userData),

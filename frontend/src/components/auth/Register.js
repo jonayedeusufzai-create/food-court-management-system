@@ -47,33 +47,42 @@ const Register = () => {
 
   return (
     <div className="auth-container">
-      <div className="auth-form">
-        <h2>Register</h2>
-        <form onSubmit={onSubmit}>
+      <div className="auth-card">
+        <div className="auth-header">
+          <h2>Create Account</h2>
+          <p>Join FoodCourtExpress today</p>
+        </div>
+        
+        <form onSubmit={onSubmit} className="auth-form">
           <div className="form-group">
+            <label htmlFor="name">Full Name</label>
             <input
               type="text"
-              placeholder="Name"
+              id="name"
               name="name"
               value={name}
               onChange={onChange}
               required
             />
           </div>
+          
           <div className="form-group">
+            <label htmlFor="email">Email Address</label>
             <input
               type="email"
-              placeholder="Email Address"
+              id="email"
               name="email"
               value={email}
               onChange={onChange}
               required
             />
           </div>
+          
           <div className="form-group">
+            <label htmlFor="password">Password</label>
             <input
               type="password"
-              placeholder="Password"
+              id="password"
               name="password"
               value={password}
               onChange={onChange}
@@ -81,10 +90,12 @@ const Register = () => {
               required
             />
           </div>
+          
           <div className="form-group">
+            <label htmlFor="confirmPassword">Confirm Password</label>
             <input
               type="password"
-              placeholder="Confirm Password"
+              id="confirmPassword"
               name="confirmPassword"
               value={confirmPassword}
               onChange={onChange}
@@ -92,28 +103,40 @@ const Register = () => {
               required
             />
           </div>
+          
           <div className="form-group">
-            <select name="role" value={role} onChange={onChange}>
+            <label htmlFor="role">Account Type</label>
+            <select id="role" name="role" value={role} onChange={onChange}>
               <option value="Customer">Customer</option>
               <option value="StallOwner">Stall Owner</option>
             </select>
           </div>
+          
           <div className="form-group">
+            <label htmlFor="phone">Phone Number (optional)</label>
             <input
               type="text"
-              placeholder="Phone Number (optional)"
+              id="phone"
               name="phone"
               value={phone}
               onChange={onChange}
             />
           </div>
-          <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading ? 'Registering...' : 'Register'}
+          
+          <button 
+            type="submit" 
+            className="btn btn-primary auth-btn"
+            disabled={loading}
+          >
+            {loading ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
-        <p>
-          Already have an account? <Link to="/login">Sign In</Link>
-        </p>
+        
+        <div className="auth-footer">
+          <p>
+            Already have an account? <Link to="/login">Sign In</Link>
+          </p>
+        </div>
       </div>
     </div>
   );

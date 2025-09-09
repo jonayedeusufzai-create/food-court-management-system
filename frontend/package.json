@@ -1,7 +1,7 @@
 {
-  "name": "food-court-frontend",
+  "name": "thetreehousse-frontend",
   "version": "1.0.0",
-  "description": "Frontend for Food Court Management System",
+  "description": "Frontend for TheTreeHousse Food Court Management System",
   "main": "index.js",
   "scripts": {
     "start": "react-scripts start",
@@ -10,12 +10,13 @@
     "eject": "react-scripts eject"
   },
   "keywords": [
-    "food-court",
+    "thetreehousse",
     "frontend",
     "react",
-    "redux"
+    "redux",
+    "food-court"
   ],
-  "author": "Your Name",
+  "author": "jonayedeusufzai",
   "license": "MIT",
   "dependencies": {
     "react": "^18.2.0",

@@ -1,4 +1,4 @@
-# Food Court Management System
+# TheTreeHousse - Food Court Management System
 
 A comprehensive management system for food courts that enables customers to browse stalls, order food, and track orders in real-time, while providing administrators with tools to manage stalls, orders, payments, and generate insightful reports.
 
@@ -28,7 +28,7 @@ A comprehensive management system for food courts that enables customers to brow
 
 ## System Overview
 
-The Food Court Management System streamlines operations in food courts by providing a digital platform for customers to order food from multiple stalls and for administrators to manage their businesses efficiently. The system supports real-time order tracking, multi-stall ordering, payment processing, inventory management, and detailed analytics.
+TheTreeHousse is a comprehensive management system for food courts that streamlines operations by providing a digital platform for customers to order food from multiple stalls and for administrators to manage their businesses efficiently. The system supports real-time order tracking, multi-stall ordering, payment processing, inventory management, and detailed analytics.
 
 For a detailed breakdown of how this project is structured and will be developed, see [PROJECT_PLAN.md](PROJECT_PLAN.md).
 
@@ -48,13 +48,13 @@ For a detailed breakdown of how this project is structured and will be developed
 - Stall owner assignment
 - Customer browsing of stalls and menus
 
-### Part 3: Order Processing and Cart System
+### Part 3: Order Processing and Cart System ✅ (Completed)
 - Multi-stall shopping cart
 - Order placement and tracking
 - Payment processing integration
 - Real-time order status updates
 
-### Part 4: Reporting, Analytics, and Admin Dashboard
+### Part 4: Reporting, Analytics, and Admin Dashboard ✅ (Completed)
 - Sales and performance reporting
 - Stall ranking system
 - Analytics dashboard
@@ -375,7 +375,7 @@ PAYMENT_API_KEYS=your_payment_gateway_api_keys
 
 MIT License
 
-Copyright (c) 2025 Food Court Management System
+Copyright (c) 2025 TheTreeHousse
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

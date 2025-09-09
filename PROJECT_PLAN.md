@@ -1,4 +1,4 @@
-# Food Court Management System - Project Plan
+# TheTreeHousse - Food Court Management System - Project Plan
 
 ## Technology Stack
 - **Frontend**: React.js with Redux for state management
@@ -12,7 +12,7 @@
 
 ## Project Breakdown
 
-### Part 1: User Authentication and Management System
+### Part 1: User Authentication and Management System ✅ (Completed)
 **Objective**: Implement complete user registration, authentication, and profile management
 
 #### Backend (MVC Components):
@@ -38,7 +38,7 @@
 - Profile Management Page
 - Dashboard Layouts (Customer, Stall Owner, Food Court Owner)
 
-### Part 2: Stall and Menu Management System
+### Part 2: Stall and Menu Management System ✅ (Completed)
 **Objective**: Implement stall creation, management, and menu item handling
 
 #### Backend (MVC Components):
@@ -61,7 +61,7 @@
 - Menu Management Interface
 - Menu Item Creation/Editing Form
 
-### Part 3: Order Processing and Cart System
+### Part 3: Order Processing and Cart System ✅ (Completed)
 **Objective**: Implement multi-stall cart functionality and order processing
 
 #### Backend (MVC Components):
@@ -87,7 +87,7 @@
 - Order Tracking Page
 - Payment Processing Interface
 
-### Part 4: Reporting, Analytics, and Admin Dashboard
+### Part 4: Reporting, Analytics, and Admin Dashboard ✅ (Completed)
 **Objective**: Implement reporting features, analytics, and complete admin dashboard
 
 #### Backend (MVC Components):
@@ -164,6 +164,27 @@
 - `createdAt`: Date
 - `updatedAt`: Date
 
+### Report Schema
+- `_id`: ObjectId
+- `type`: String (sales, performance, inventory, stall-ranking)
+- `title`: String
+- `description`: String
+- `data`: Mixed
+- `generatedBy`: ObjectId (ref to User)
+- `dateRange`: Object
+- `filters`: Mixed
+- `createdAt`: Date
+- `updatedAt`: Date
+
+### Analytics Schema
+- `_id`: ObjectId
+- `metric`: String (sales-trend, order-volume, customer-behavior, stall-performance)
+- `data`: Mixed
+- `date`: Date
+- `period`: String (daily, weekly, monthly, yearly)
+- `createdAt`: Date
+- `updatedAt`: Date
+
 ## API Endpoints Structure
 
 ### Authentication
@@ -228,9 +249,18 @@ GET /api/payments/:orderId
 
 ### Reports
 ```
+GET /api/reports
+GET /api/reports/:id
 GET /api/reports/sales
 GET /api/reports/performance
 GET /api/reports/stall-ranking
+```
+
+### Analytics
+```
+GET /api/analytics/sales-trends
+GET /api/analytics/order-volume
+GET /api/analytics/stall-performance
 ```
 
 ## Development Approach

@@ -37,24 +37,31 @@ const Login = () => {
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-form">
-        <h2>Login</h2>
-        <form onSubmit={onSubmit}>
+    <div className="login-container">
+      <div className="auth-card">
+        <div className="auth-header">
+          <h2>Welcome Back</h2>
+          <p>Sign in to your FoodCourtExpress account</p>
+        </div>
+        
+        <form onSubmit={onSubmit} className="auth-form">
           <div className="form-group">
+            <label htmlFor="email">Email Address</label>
             <input
               type="email"
-              placeholder="Email Address"
+              id="email"
               name="email"
               value={email}
               onChange={onChange}
               required
             />
           </div>
+          
           <div className="form-group">
+            <label htmlFor="password">Password</label>
             <input
               type="password"
-              placeholder="Password"
+              id="password"
               name="password"
               value={password}
               onChange={onChange}
@@ -62,13 +69,21 @@ const Login = () => {
               required
             />
           </div>
-          <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading ? 'Logging in...' : 'Login'}
+          
+          <button 
+            type="submit" 
+            className="btn btn-primary auth-btn"
+            disabled={loading}
+          >
+            {loading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
-        <p>
-          Don't have an account? <Link to="/register">Sign Up</Link>
-        </p>
+        
+        <div className="auth-footer">
+          <p>
+            Don't have an account? <Link to="/register">Sign Up</Link>
+          </p>
+        </div>
       </div>
     </div>
   );
