@@ -7,6 +7,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:coverage": "react-scripts test --coverage --watchAll=false",
     "eject": "react-scripts eject"
   },
   "keywords": [
@@ -19,15 +20,21 @@
   "author": "jonayedeusufzai",
   "license": "MIT",
   "dependencies": {
-    "@reduxjs/toolkit": "^1.9.0",
-    "axios": "^1.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-redux": "^8.0.5",
-    "react-router-dom": "^6.4.3",
     "react-scripts": "^5.0.1",
+    "react-router-dom": "^6.4.3",
+    "axios": "^1.2.0",
     "redux": "^4.2.0",
-    "socket.io-client": "^4.8.1"
+    "react-redux": "^8.0.5",
+    "@reduxjs/toolkit": "^1.9.0",
+    "socket.io-client": "^4.5.4"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/user-event": "^14.4.3",
+    "jest-environment-jsdom": "^29.3.1"
   },
   "browserslist": {
     "production": [
@@ -39,6 +46,14 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
+    ]
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}",
+      "!src/index.js",
+      "!src/reportWebVitals.js",
+      "!src/setupTests.js"
     ]
   }
 }
