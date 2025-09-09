@@ -99,3 +99,27 @@
   padding: 2rem 1rem;
   background: linear-gradient(135deg, #ff6b35 0%, #2a9d8f 100%);
 }
+
+.verify-email-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 20px;
+}
+
+.verification-content {
+  text-align: center;
+  padding: 20px;
+}
+
+.verification-content .loading,
+.verification-content .error-message,
+.verification-content .success-message {
+  padding: 20px;
+}
+
+.verification-content .error-message p,
+.verification-content .success-message p {
+  margin-bottom: 15px;
+}

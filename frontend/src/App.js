@@ -6,6 +6,7 @@ import './App.css';
 import MainLayout from './components/layout/MainLayout';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
+import VerifyEmail from './components/auth/VerifyEmail';
 import CustomerDashboard from './components/dashboard/CustomerDashboard';
 import StallOwnerDashboard from './components/dashboard/StallOwnerDashboard';
 import FoodCourtOwnerDashboard from './components/dashboard/FoodCourtOwnerDashboard';
@@ -26,37 +27,14 @@ import ReportDetailsPage from './components/dashboard/ReportDetailsPage';
 import AnalyticsDashboard from './components/dashboard/AnalyticsDashboard';
 
 function App() {
-  const dispatch = useDispatch();
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
-
-  useEffect(() => {
-    dispatch(loadUser());
-  }, [dispatch]);
-
-  const renderDashboard = () => {
-    if (!isAuthenticated) {
-      return <Login />;
-    }
-
-    switch (user?.role) {
-      case 'Customer':
-        return <CustomerDashboard />;
-      case 'StallOwner':
-        return <StallOwnerDashboard />;
-      case 'FoodCourtOwner':
-        return <AdminDashboard />;
-      default:
-        return <CustomerDashboard />;
-    }
-  };
-
   return (
     <Router>
-      <MainLayout>
+      <div className="App">
         <Routes>
           <Route path="/" element={<CustomerDashboard />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/verify-email/:token" element={<VerifyEmail />} />
           <Route path="/dashboard" element={
             <DashboardLayout user={user}>
               {renderDashboard()}
@@ -131,7 +109,7 @@ function App() {
             </DashboardLayout>
           } />
         </Routes>
-      </MainLayout>
+      </div>
     </Router>
   );
 }

@@ -2,6 +2,7 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+const { sendVerificationEmail } = require('../services/emailService');
 
 // Generate JWT token
 const generateToken = (id) => {
@@ -39,7 +40,13 @@ const registerUser = async (req, res) => {
       user.verificationToken = verificationToken;
       await user.save();
 
-      // TODO: Send verification email (implement email service)
+      // Send verification email
+      try {
+        await sendVerificationEmail(user.email, verificationToken);
+      } catch (emailError) {
+        console.error('Failed to send verification email:', emailError);
+        // Don't fail the registration if email sending fails
+      }
 
       res.status(201).json({
         _id: user._id,
@@ -130,6 +137,19 @@ const registerAdmin = async (req, res) => {
     });
 
     if (user) {
+      // Generate verification token
+      const verificationToken = crypto.randomBytes(20).toString('hex');
+      user.verificationToken = verificationToken;
+      await user.save();
+
+      // Send verification email
+      try {
+        await sendVerificationEmail(user.email, verificationToken);
+      } catch (emailError) {
+        console.error('Failed to send verification email:', emailError);
+        // Don't fail the registration if email sending fails
+      }
+
       res.status(201).json({
         _id: user._id,
         name: user.name,
