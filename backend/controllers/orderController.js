@@ -70,13 +70,28 @@ const createOrder = [
   }
 ];
 
-// @desc    Get all orders
+// @desc    Get all orders with pagination
 // @route   GET /api/orders
 // @access  Private/Admin
 const getOrders = async (req, res) => {
   try {
-    const orders = await Order.find().populate('customer', 'name email').sort('-createdAt');
-    res.json(orders);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    
+    const totalOrders = await Order.countDocuments();
+    const orders = await Order.find()
+      .populate('customer', 'name email')
+      .sort('-createdAt')
+      .skip(skip)
+      .limit(limit);
+    
+    res.json({
+      orders,
+      currentPage: page,
+      totalPages: Math.ceil(totalOrders / limit),
+      totalOrders
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -159,27 +174,55 @@ const updateOrderStatus = [
   }
 ];
 
-// @desc    Get orders by customer
+// @desc    Get orders by customer with pagination
 // @route   GET /api/orders/customer/:customerId
 // @access  Private
 const getOrdersByCustomer = async (req, res) => {
   try {
-    const orders = await Order.find({ customer: req.params.customerId }).sort('-createdAt');
-    res.json(orders);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    
+    const totalOrders = await Order.countDocuments({ customer: req.params.customerId });
+    const orders = await Order.find({ customer: req.params.customerId })
+      .sort('-createdAt')
+      .skip(skip)
+      .limit(limit);
+    
+    res.json({
+      orders,
+      currentPage: page,
+      totalPages: Math.ceil(totalOrders / limit),
+      totalOrders
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// @desc    Get orders by stall
+// @desc    Get orders by stall with pagination
 // @route   GET /api/orders/stall/:stallId
 // @access  Private
 const getOrdersByStall = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    
     // This would require updating the Order model to include stall information
-    // For now, we'll return all orders
-    const orders = await Order.find().sort('-createdAt');
-    res.json(orders);
+    // For now, we'll return all orders with pagination
+    const totalOrders = await Order.countDocuments();
+    const orders = await Order.find()
+      .sort('-createdAt')
+      .skip(skip)
+      .limit(limit);
+    
+    res.json({
+      orders,
+      currentPage: page,
+      totalPages: Math.ceil(totalOrders / limit),
+      totalOrders
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

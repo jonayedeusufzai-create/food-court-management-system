@@ -12,8 +12,7 @@ const menuItemSchema = new mongoose.Schema({
   },
   price: {
     type: Number,
-    required: true,
-    min: 0
+    required: true
   },
   stall: {
     type: mongoose.Schema.Types.ObjectId,
@@ -27,23 +26,24 @@ const menuItemSchema = new mongoose.Schema({
   },
   stock: {
     type: Number,
-    required: true,
-    min: 0,
     default: 0
   },
   image: {
-    type: String // URL to item image
+    type: String
   },
   isActive: {
     type: Boolean,
     default: true
-  },
-  preparationTime: {
-    type: Number, // in minutes
-    default: 10
   }
 }, {
   timestamps: true
 });
+
+// Create indexes for better query performance
+menuItemSchema.index({ stall: 1 });
+menuItemSchema.index({ category: 1 });
+menuItemSchema.index({ isActive: 1 });
+menuItemSchema.index({ name: 1 });
+menuItemSchema.index({ price: 1 });
 
 module.exports = mongoose.model('MenuItem', menuItemSchema);

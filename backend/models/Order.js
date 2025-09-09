@@ -1,69 +1,67 @@
 const mongoose = require('mongoose');
 
-const orderItemSchema = new mongoose.Schema({
-  menuItem: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'MenuItem',
-    required: true
-  },
-  stall: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Stall',
-    required: true
-  },
-  quantity: {
-    type: Number,
-    required: true,
-    min: 1
-  },
-  price: {
-    type: Number,
-    required: true,
-    min: 0
-  }
-});
-
 const orderSchema = new mongoose.Schema({
-  user: {
+  customer: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
-  items: [orderItemSchema],
+  items: [
+    {
+      name: {
+        type: String,
+        required: true
+      },
+      quantity: {
+        type: Number,
+        required: true
+      },
+      price: {
+        type: Number,
+        required: true
+      }
+    }
+  ],
   totalAmount: {
     type: Number,
-    required: true,
-    min: 0
+    required: true
   },
   status: {
     type: String,
-    enum: ['Pending', 'Preparing', 'Ready for Pickup', 'Completed', 'Cancelled'],
+    enum: ['Pending', 'Preparing', 'Ready', 'Delivered', 'Completed', 'Cancelled'],
     default: 'Pending'
   },
   paymentStatus: {
     type: String,
-    enum: ['Pending', 'Paid', 'Failed', 'Cash on Delivery'],
+    enum: ['Pending', 'Paid', 'Failed'],
     default: 'Pending'
   },
-  paymentMethod: {
-    type: String,
-    enum: ['Bikash', 'Nagad', 'Rocket', 'Cash on Delivery'],
-    required: true
-  },
   deliveryAddress: {
-    street: String,
-    city: String,
-    state: String,
-    zipCode: String,
-    country: String
-  },
-  orderNotes: String,
-  preparationTime: {
-    type: Number, // in minutes
-    default: 0
+    street: {
+      type: String,
+      required: true
+    },
+    city: {
+      type: String,
+      required: true
+    },
+    state: {
+      type: String,
+      required: true
+    },
+    zipCode: {
+      type: String,
+      required: true
+    }
   }
 }, {
   timestamps: true
 });
+
+// Create indexes for better query performance
+orderSchema.index({ customer: 1 });
+orderSchema.index({ status: 1 });
+orderSchema.index({ createdAt: -1 });
+orderSchema.index({ 'items.name': 1 });
 
 module.exports = mongoose.model('Order', orderSchema);

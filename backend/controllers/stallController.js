@@ -21,13 +21,41 @@ const validateStall = [
     .withMessage('Rent must be a positive number')
 ];
 
-// @desc    Get all stalls
+// @desc    Get all stalls with pagination
 // @route   GET /api/stalls
 // @access  Public
 const getStalls = async (req, res) => {
   try {
-    const stalls = await Stall.find({ isActive: true });
-    res.json(stalls);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    
+    // Build filter object
+    const filter = { isActive: true };
+    
+    // Add category filter if provided
+    if (req.query.category) {
+      filter.category = req.query.category;
+    }
+    
+    // Add search filter if provided
+    if (req.query.search) {
+      filter.name = { $regex: req.query.search, $options: 'i' };
+    }
+    
+    const totalStalls = await Stall.countDocuments(filter);
+    const stalls = await Stall.find(filter)
+      .populate('owner', 'name email')
+      .sort('-createdAt')
+      .skip(skip)
+      .limit(limit);
+    
+    res.json({
+      stalls,
+      currentPage: page,
+      totalPages: Math.ceil(totalStalls / limit),
+      totalStalls
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -38,7 +66,7 @@ const getStalls = async (req, res) => {
 // @access  Public
 const getStallById = async (req, res) => {
   try {
-    const stall = await Stall.findById(req.params.id);
+    const stall = await Stall.findById(req.params.id).populate('owner', 'name email');
     
     if (stall) {
       res.json(stall);

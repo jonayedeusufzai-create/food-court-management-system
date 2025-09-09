@@ -24,13 +24,46 @@ const validateMenuItem = [
     .withMessage('Stock must be a non-negative integer')
 ];
 
-// @desc    Get all menu items
+// @desc    Get all menu items with pagination
 // @route   GET /api/menu
 // @access  Public
 const getMenuItems = async (req, res) => {
   try {
-    const menuItems = await MenuItem.find({ isActive: true });
-    res.json(menuItems);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    
+    // Build filter object
+    const filter = { isActive: true };
+    
+    // Add stall filter if provided
+    if (req.query.stall) {
+      filter.stall = req.query.stall;
+    }
+    
+    // Add category filter if provided
+    if (req.query.category) {
+      filter.category = req.query.category;
+    }
+    
+    // Add search filter if provided
+    if (req.query.search) {
+      filter.name = { $regex: req.query.search, $options: 'i' };
+    }
+    
+    const totalItems = await MenuItem.countDocuments(filter);
+    const menuItems = await MenuItem.find(filter)
+      .populate('stall', 'name')
+      .sort('-createdAt')
+      .skip(skip)
+      .limit(limit);
+    
+    res.json({
+      menuItems,
+      currentPage: page,
+      totalPages: Math.ceil(totalItems / limit),
+      totalItems
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -41,7 +74,7 @@ const getMenuItems = async (req, res) => {
 // @access  Public
 const getMenuItemById = async (req, res) => {
   try {
-    const menuItem = await MenuItem.findById(req.params.id);
+    const menuItem = await MenuItem.findById(req.params.id).populate('stall', 'name');
     
     if (menuItem) {
       res.json(menuItem);
@@ -53,16 +86,34 @@ const getMenuItemById = async (req, res) => {
   }
 };
 
-// @desc    Get menu items by stall
+// @desc    Get menu items by stall with pagination
 // @route   GET /api/menu/stall/:stallId
 // @access  Public
 const getMenuItemsByStall = async (req, res) => {
   try {
-    const menuItems = await MenuItem.find({ 
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    
+    const totalItems = await MenuItem.countDocuments({ 
       stall: req.params.stallId,
       isActive: true 
     });
-    res.json(menuItems);
+    
+    const menuItems = await MenuItem.find({ 
+      stall: req.params.stallId,
+      isActive: true 
+    })
+      .sort('-createdAt')
+      .skip(skip)
+      .limit(limit);
+    
+    res.json({
+      menuItems,
+      currentPage: page,
+      totalPages: Math.ceil(totalItems / limit),
+      totalItems
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

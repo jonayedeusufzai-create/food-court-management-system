@@ -22,26 +22,20 @@ const stallSchema = new mongoose.Schema({
   },
   rent: {
     type: Number,
-    required: true,
-    min: 0
+    default: 0
   },
   isActive: {
     type: Boolean,
     default: true
-  },
-  image: {
-    type: String // URL to stall image
-  },
-  location: {
-    type: String,
-    trim: true
-  },
-  contactInfo: {
-    phone: String,
-    email: String
   }
 }, {
   timestamps: true
 });
+
+// Create indexes for better query performance
+stallSchema.index({ owner: 1 });
+stallSchema.index({ category: 1 });
+stallSchema.index({ isActive: 1 });
+stallSchema.index({ name: 1 });
 
 module.exports = mongoose.model('Stall', stallSchema);

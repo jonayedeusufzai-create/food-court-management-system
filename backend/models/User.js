@@ -76,6 +76,11 @@ const userSchema = new mongoose.Schema({
   toObject: { virtuals: true }
 });
 
+// Create indexes for better query performance
+userSchema.index({ email: 1 });
+userSchema.index({ role: 1 });
+userSchema.index({ createdAt: -1 });
+
 // Hash password before saving
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
