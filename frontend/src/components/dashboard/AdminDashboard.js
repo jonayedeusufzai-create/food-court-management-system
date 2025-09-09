@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { analyticsAPI, orderAPI, stallAPI } from '../../services/api';
 import './dashboard.css';
 
 const AdminDashboard = () => {
@@ -12,70 +13,93 @@ const AdminDashboard = () => {
 
   const [recentOrders, setRecentOrders] = useState([]);
   const [topStalls, setTopStalls] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // TODO: Fetch dashboard data from API
-    // Mock data for now
-    const mockStats = {
-      totalStalls: 12,
-      totalOrders: 124,
-      totalRevenue: 2456.78,
-      pendingOrders: 8
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch all dashboard data concurrently
+        const [statsResponse, ordersResponse, stallsResponse] = await Promise.all([
+          analyticsAPI.getDashboardStats(),
+          analyticsAPI.getRecentOrders(),
+          analyticsAPI.getTopStalls()
+        ]);
+        
+        setStats(statsResponse.data);
+        setRecentOrders(ordersResponse.data);
+        setTopStalls(stallsResponse.data);
+      } catch (err) {
+        setError(err.message);
+        console.error('Failed to fetch dashboard data:', err);
+        
+        // Fallback to mock data if API fails
+        const mockStats = {
+          totalStalls: 12,
+          totalOrders: 124,
+          totalRevenue: 2456.78,
+          pendingOrders: 8
+        };
+
+        const mockOrders = [
+          {
+            _id: '1',
+            orderNumber: 'ORD-001',
+            customer: 'John Doe',
+            totalAmount: 24.99,
+            status: 'Pending',
+            createdAt: '2023-05-15T10:30:00Z'
+          },
+          {
+            _id: '2',
+            orderNumber: 'ORD-002',
+            customer: 'Jane Smith',
+            totalAmount: 18.50,
+            status: 'Preparing',
+            createdAt: '2023-05-15T09:15:00Z'
+          },
+          {
+            _id: '3',
+            orderNumber: 'ORD-003',
+            customer: 'Mike Johnson',
+            totalAmount: 32.75,
+            status: 'Ready',
+            createdAt: '2023-05-15T08:45:00Z'
+          }
+        ];
+
+        const mockStalls = [
+          {
+            _id: '1',
+            name: 'Burger Palace',
+            revenue: 1250.50,
+            orders: 42
+          },
+          {
+            _id: '2',
+            name: 'Pizza Corner',
+            revenue: 980.25,
+            orders: 38
+          },
+          {
+            _id: '3',
+            name: 'Sushi Bar',
+            revenue: 820.75,
+            orders: 29
+          }
+        ];
+
+        setStats(mockStats);
+        setRecentOrders(mockOrders);
+        setTopStalls(mockStalls);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    const mockOrders = [
-      {
-        _id: '1',
-        orderNumber: 'ORD-001',
-        customer: 'John Doe',
-        totalAmount: 24.99,
-        status: 'Pending',
-        createdAt: '2023-05-15T10:30:00Z'
-      },
-      {
-        _id: '2',
-        orderNumber: 'ORD-002',
-        customer: 'Jane Smith',
-        totalAmount: 18.50,
-        status: 'Preparing',
-        createdAt: '2023-05-15T09:15:00Z'
-      },
-      {
-        _id: '3',
-        orderNumber: 'ORD-003',
-        customer: 'Mike Johnson',
-        totalAmount: 32.75,
-        status: 'Ready',
-        createdAt: '2023-05-15T08:45:00Z'
-      }
-    ];
-
-    const mockStalls = [
-      {
-        _id: '1',
-        name: 'Burger Palace',
-        revenue: 1250.50,
-        orders: 42
-      },
-      {
-        _id: '2',
-        name: 'Pizza Corner',
-        revenue: 980.25,
-        orders: 38
-      },
-      {
-        _id: '3',
-        name: 'Sushi Bar',
-        revenue: 820.75,
-        orders: 29
-      }
-    ];
-
-    setTimeout(() => {
-      setStats(mockStats);
-      setRecentOrders(mockOrders);
-      setTopStalls(mockStalls);
-    }, 1000);
+    fetchDashboardData();
   }, []);
 
   const getStatusClass = (status) => {
@@ -96,6 +120,22 @@ const AdminDashboard = () => {
         return '';
     }
   };
+
+  if (loading) {
+    return (
+      <div className="admin-dashboard">
+        <div className="loading">Loading dashboard data...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="admin-dashboard">
+        <div className="error">Error loading dashboard: {error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="admin-dashboard">

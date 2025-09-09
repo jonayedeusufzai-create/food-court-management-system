@@ -46,4 +46,40 @@ export const userAPI = {
   deleteUser: (id) => API.delete(`/users/${id}`),
 };
 
+// Analytics API calls
+export const analyticsAPI = {
+  getDashboardStats: () => API.get('/analytics/dashboard-stats'),
+  getRecentOrders: () => API.get('/analytics/recent-orders'),
+  getTopStalls: () => API.get('/analytics/top-stalls'),
+  getSalesTrends: () => API.get('/analytics/sales-trends'),
+};
+
+// Order API calls
+export const orderAPI = {
+  createOrder: (orderData) => API.post('/orders', orderData),
+  getOrders: () => API.get('/orders'),
+  getOrderById: (id) => API.get(`/orders/${id}`),
+  updateOrderStatus: (id, statusData) => API.put(`/orders/${id}/status`, statusData),
+  getOrdersByCustomer: (customerId) => API.get(`/orders/customer/${customerId}`),
+};
+
+// Stall API calls
+export const stallAPI = {
+  getStalls: () => API.get('/stalls'),
+  getStallById: (id) => API.get(`/stalls/${id}`),
+  createStall: (stallData) => API.post('/stalls', stallData),
+  updateStall: (id, stallData) => API.put(`/stalls/${id}`, stallData),
+  deleteStall: (id) => API.delete(`/stalls/${id}`),
+};
+
+// Menu API calls
+export const menuAPI = {
+  getMenuItems: () => API.get('/menu'),
+  getMenuItemById: (id) => API.get(`/menu/${id}`),
+  getMenuItemsByStall: (stallId) => API.get(`/menu/stall/${stallId}`),
+  createMenuItem: (menuItemData) => API.post('/menu', menuItemData),
+  updateMenuItem: (id, menuItemData) => API.put(`/menu/${id}`, menuItemData),
+  deleteMenuItem: (id) => API.delete(`/menu/${id}`),
+};
+
 export default API;
