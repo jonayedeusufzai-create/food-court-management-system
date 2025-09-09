@@ -1,116 +1,54 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { loadUser } from './redux/slices/authSlice';
-import './App.css';
+import { Provider } from 'react-redux';
+import store from './redux/store';
 import MainLayout from './components/layout/MainLayout';
-import Register from './components/auth/Register';
 import Login from './components/auth/Login';
+import Register from './components/auth/Register';
 import VerifyEmail from './components/auth/VerifyEmail';
 import CustomerDashboard from './components/dashboard/CustomerDashboard';
 import StallOwnerDashboard from './components/dashboard/StallOwnerDashboard';
 import FoodCourtOwnerDashboard from './components/dashboard/FoodCourtOwnerDashboard';
 import AdminDashboard from './components/dashboard/AdminDashboard';
-import Profile from './components/profile/Profile';
-import DashboardLayout from './components/dashboard/DashboardLayout';
 import StallsPage from './components/stalls/StallsPage';
 import MenuPage from './components/menu/MenuPage';
-import StallManagement from './components/stalls/StallManagement';
-import MenuManagement from './components/menu/MenuManagement';
 import CartPage from './components/cart/CartPage';
 import CheckoutPage from './components/cart/CheckoutPage';
 import OrdersPage from './components/orders/OrdersPage';
 import OrderDetailsPage from './components/orders/OrderDetailsPage';
-import OrderManagement from './components/orders/OrderManagement';
-import ReportsPage from './components/dashboard/ReportsPage';
-import ReportDetailsPage from './components/dashboard/ReportDetailsPage';
-import AnalyticsDashboard from './components/dashboard/AnalyticsDashboard';
+import Profile from './components/profile/Profile';
+import ErrorBoundary from './components/layout/ErrorBoundary';
+import './App.css';
 
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <Routes>
-          <Route path="/" element={<CustomerDashboard />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/verify-email/:token" element={<VerifyEmail />} />
-          <Route path="/dashboard" element={
-            <DashboardLayout user={user}>
-              {renderDashboard()}
-            </DashboardLayout>
-          } />
-          <Route path="/profile" element={
-            <DashboardLayout user={user}>
-              <Profile />
-            </DashboardLayout>
-          } />
-          {/* Customer routes */}
-          <Route path="/stalls" element={
-            <DashboardLayout user={user}>
-              <StallsPage />
-            </DashboardLayout>
-          } />
-          <Route path="/stalls/:stallId" element={
-            <DashboardLayout user={user}>
-              <MenuPage />
-            </DashboardLayout>
-          } />
-          <Route path="/cart" element={
-            <DashboardLayout user={user}>
-              <CartPage />
-            </DashboardLayout>
-          } />
-          <Route path="/checkout" element={
-            <DashboardLayout user={user}>
-              <CheckoutPage />
-            </DashboardLayout>
-          } />
-          <Route path="/orders" element={
-            <DashboardLayout user={user}>
-              <OrdersPage />
-            </DashboardLayout>
-          } />
-          <Route path="/orders/:orderId" element={
-            <DashboardLayout user={user}>
-              <OrderDetailsPage />
-            </DashboardLayout>
-          } />
-          {/* Stall Owner routes */}
-          <Route path="/stalls/manage" element={
-            <DashboardLayout user={user}>
-              <StallManagement />
-            </DashboardLayout>
-          } />
-          <Route path="/menu/manage" element={
-            <DashboardLayout user={user}>
-              <MenuManagement />
-            </DashboardLayout>
-          } />
-          <Route path="/orders/manage" element={
-            <DashboardLayout user={user}>
-              <OrderManagement />
-            </DashboardLayout>
-          } />
-          {/* Admin routes */}
-          <Route path="/reports" element={
-            <DashboardLayout user={user}>
-              <ReportsPage />
-            </DashboardLayout>
-          } />
-          <Route path="/reports/:reportId" element={
-            <DashboardLayout user={user}>
-              <ReportDetailsPage />
-            </DashboardLayout>
-          } />
-          <Route path="/analytics" element={
-            <DashboardLayout user={user}>
-              <AnalyticsDashboard />
-            </DashboardLayout>
-          } />
-        </Routes>
-      </div>
-    </Router>
+    <ErrorBoundary>
+      <Provider store={store}>
+        <Router>
+          <div className="App">
+            <Routes>
+              <Route path="/" element={<MainLayout />}>
+                <Route index element={<CustomerDashboard />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/verify-email/:token" element={<VerifyEmail />} />
+                <Route path="/dashboard" element={<CustomerDashboard />} />
+                <Route path="/dashboard/stall-owner" element={<StallOwnerDashboard />} />
+                <Route path="/dashboard/food-court-owner" element={<FoodCourtOwnerDashboard />} />
+                <Route path="/dashboard/admin" element={<AdminDashboard />} />
+                <Route path="/stalls" element={<StallsPage />} />
+                <Route path="/menu" element={<MenuPage />} />
+                <Route path="/cart" element={<CartPage />} />
+                <Route path="/checkout" element={<CheckoutPage />} />
+                <Route path="/orders" element={<OrdersPage />} />
+                <Route path="/orders/:id" element={<OrderDetailsPage />} />
+                <Route path="/profile" element={<Profile />} />
+              </Route>
+            </Routes>
+          </div>
+        </Router>
+      </Provider>
+    </ErrorBoundary>
   );
 }
 

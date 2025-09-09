@@ -23,6 +23,35 @@
   color: #61dafb;
 }
 
+/* Error Boundary Styles */
+.error-boundary {
+  padding: 20px;
+  text-align: center;
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  border-radius: 5px;
+  margin: 20px;
+}
+
+.error-boundary h2 {
+  margin-top: 0;
+}
+
+.error-boundary details {
+  margin: 20px 0;
+  text-align: left;
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 3px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.error-boundary button {
+  margin-top: 10px;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
