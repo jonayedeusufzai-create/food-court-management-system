@@ -1,9 +1,9 @@
 const request = require('supertest');
 const express = require('express');
 const mongoose = require('mongoose');
-const Order = require('../models/Order');
-const User = require('../models/User');
-const { createOrder, getOrders, getOrderById } = require('../controllers/orderController');
+const Order = require('../../models/Order');
+const User = require('../../models/User');
+const { createOrder, getOrders, getOrderById } = require('../orderController');
 
 // Create express app for testing
 const app = express();
@@ -43,6 +43,25 @@ describe('Order Controller', () => {
   });
 
   describe('POST /api/orders', () => {
+    let userId;
+    let user;
+    
+    beforeEach(async () => {
+      // Create a test user
+      user = await User.create({
+        name: 'Order Test User',
+        email: 'order_test@example.com',
+        password: 'Password123!'
+      });
+      userId = user._id;
+    });
+
+    afterEach(async () => {
+      // Clean up users and orders
+      await User.deleteMany({});
+      await Order.deleteMany({});
+    });
+
     it('should create a new order successfully', async () => {
       const orderData = {
         items: [
@@ -61,7 +80,19 @@ describe('Order Controller', () => {
         }
       };
 
-      const response = await request(app)
+      // Mock the authentication middleware to set user
+      const mockAuth = (req, res, next) => {
+        req.user = { _id: userId, role: 'Customer' };
+        next();
+      };
+      
+      // Create a new app instance for this test to avoid middleware conflicts
+      const testApp = express();
+      testApp.use(express.json());
+      testApp.use(mockAuth);
+      testApp.post('/api/orders', require('../orderController').createOrder);
+
+      const response = await request(testApp)
         .post('/api/orders')
         .send(orderData)
         .expect(201);
@@ -82,7 +113,19 @@ describe('Order Controller', () => {
         }
       };
 
-      const response = await request(app)
+      // Mock the authentication middleware to set user
+      const mockAuth = (req, res, next) => {
+        req.user = { _id: userId, role: 'Customer' };
+        next();
+      };
+      
+      // Create a new app instance for this test to avoid middleware conflicts
+      const testApp = express();
+      testApp.use(express.json());
+      testApp.use(mockAuth);
+      testApp.post('/api/orders', require('../orderController').createOrder);
+
+      const response = await request(testApp)
         .post('/api/orders')
         .send(orderData)
         .expect(400);
@@ -92,10 +135,21 @@ describe('Order Controller', () => {
   });
 
   describe('GET /api/orders', () => {
+    let userId;
+    let user;
+    
     beforeEach(async () => {
+      // Create a test user
+      user = await User.create({
+        name: 'Order Get Test User',
+        email: 'order_get_test@example.com',
+        password: 'Password123!'
+      });
+      userId = user._id;
+      
       // Create test orders
       await Order.create({
-        customer: 'user123',
+        customer: userId,
         items: [{ name: 'Burger', quantity: 1, price: 12.99 }],
         totalAmount: 12.99,
         deliveryAddress: {
@@ -108,17 +162,30 @@ describe('Order Controller', () => {
     });
 
     afterEach(async () => {
-      // Clean up orders
+      // Clean up orders and users
       await Order.deleteMany({});
+      await User.deleteMany({});
     });
 
     it('should get all orders (admin only)', async () => {
-      const response = await request(app)
+      // Mock admin middleware
+      const mockAdmin = (req, res, next) => {
+        req.user = { _id: userId, role: 'FoodCourtOwner' };
+        next();
+      };
+      
+      // Create a new app instance for this test to avoid middleware conflicts
+      const testApp = express();
+      testApp.use(express.json());
+      testApp.use(mockAdmin);
+      testApp.get('/api/orders', require('../orderController').getOrders);
+
+      const response = await request(testApp)
         .get('/api/orders')
         .expect(200);
 
-      expect(Array.isArray(response.body)).toBe(true);
-      expect(response.body).toHaveLength(1);
+      expect(Array.isArray(response.body.orders)).toBe(true);
+      expect(response.body.orders).toHaveLength(1);
     });
   });
 });

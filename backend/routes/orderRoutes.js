@@ -2,7 +2,7 @@ const express = require('express');
 const {
   getOrders,
   getOrderById,
-  getMyOrders,
+  getOrdersByCustomer,
   getOrdersByStall,
   createOrder,
   updateOrderStatus
@@ -16,7 +16,7 @@ router.route('/')
   .post(protect, createOrder);
 
 router.route('/myorders')
-  .get(protect, getMyOrders);
+  .get(protect, getOrdersByCustomer);
 
 router.route('/stall/:stallId')
   .get(protect, getOrdersByStall);

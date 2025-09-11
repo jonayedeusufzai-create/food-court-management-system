@@ -144,3 +144,7 @@ mongoose
 
 // Export io for use in controllers
 module.exports = { io, connectedUsers };
+
+// Set socketIO references in orderController after initialization
+const orderController = require('./controllers/orderController');
+orderController.setSocketIO(io, connectedUsers);

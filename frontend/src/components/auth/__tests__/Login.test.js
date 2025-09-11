@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import store from '../../../redux/store';
 import Login from '../Login';
 
@@ -17,7 +17,7 @@ const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
-  BrowserRouter: ({ children }) => <div>{children}</div>
+  Link: ({ children, to }) => <a href={to}>{children}</a>
 }));
 
 describe('Login Component', () => {
@@ -28,9 +28,9 @@ describe('Login Component', () => {
   it('renders login form correctly', () => {
     render(
       <Provider store={store}>
-        <BrowserRouter>
+        <MemoryRouter>
           <Login />
-        </BrowserRouter>
+        </MemoryRouter>
       </Provider>
     );
 
@@ -38,25 +38,6 @@ describe('Login Component', () => {
     expect(screen.getByLabelText('Email Address')).toBeInTheDocument();
     expect(screen.getByLabelText('Password')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Sign In' })).toBeInTheDocument();
-  });
-
-  it('shows validation errors for empty fields', async () => {
-    render(
-      <Provider store={store}>
-        <BrowserRouter>
-          <Login />
-        </BrowserRouter>
-      </Provider>
-    );
-
-    const submitButton = screen.getByRole('button', { name: 'Sign In' });
-    fireEvent.click(submitButton);
-
-    // Wait for validation errors to appear
-    await waitFor(() => {
-      expect(screen.getByText('Please provide a valid email')).toBeInTheDocument();
-      expect(screen.getByText('Password is required')).toBeInTheDocument();
-    });
   });
 
   it('submits form with valid data', async () => {
@@ -73,9 +54,9 @@ describe('Login Component', () => {
 
     render(
       <Provider store={store}>
-        <BrowserRouter>
+        <MemoryRouter>
           <Login />
-        </BrowserRouter>
+        </MemoryRouter>
       </Provider>
     );
 

@@ -24,7 +24,7 @@ const validateMenuItem = [
     .withMessage('Stock must be a non-negative integer')
 ];
 
-// @desc    Get all menu items with pagination
+// @desc    Get all menu items with pagination and advanced filtering
 // @route   GET /api/menu
 // @access  Public
 const getMenuItems = async (req, res) => {
@@ -48,13 +48,63 @@ const getMenuItems = async (req, res) => {
     
     // Add search filter if provided
     if (req.query.search) {
-      filter.name = { $regex: req.query.search, $options: 'i' };
+      filter.$or = [
+        { name: { $regex: req.query.search, $options: 'i' } },
+        { description: { $regex: req.query.search, $options: 'i' } },
+        { category: { $regex: req.query.search, $options: 'i' } }
+      ];
+    }
+    
+    // Add min/max price filters
+    if (req.query.minPrice || req.query.maxPrice) {
+      filter.price = {};
+      if (req.query.minPrice) {
+        filter.price.$gte = parseFloat(req.query.minPrice);
+      }
+      if (req.query.maxPrice) {
+        filter.price.$lte = parseFloat(req.query.maxPrice);
+      }
+    }
+    
+    // Add min stock filter
+    if (req.query.minStock) {
+      filter.stock = { $gte: parseInt(req.query.minStock) };
+    }
+    
+    // Add sorting
+    let sort = '-createdAt';
+    if (req.query.sort) {
+      switch (req.query.sort) {
+        case 'name':
+          sort = 'name';
+          break;
+        case 'name_desc':
+          sort = '-name';
+          break;
+        case 'price':
+          sort = 'price';
+          break;
+        case 'price_desc':
+          sort = '-price';
+          break;
+        case 'stock':
+          sort = 'stock';
+          break;
+        case 'stock_desc':
+          sort = '-stock';
+          break;
+        case 'createdAt':
+          sort = 'createdAt';
+          break;
+        default:
+          sort = '-createdAt';
+      }
     }
     
     const totalItems = await MenuItem.countDocuments(filter);
     const menuItems = await MenuItem.find(filter)
       .populate('stall', 'name')
-      .sort('-createdAt')
+      .sort(sort)
       .skip(skip)
       .limit(limit);
     
@@ -62,7 +112,16 @@ const getMenuItems = async (req, res) => {
       menuItems,
       currentPage: page,
       totalPages: Math.ceil(totalItems / limit),
-      totalItems
+      totalItems,
+      filters: {
+        stall: req.query.stall || null,
+        category: req.query.category || null,
+        search: req.query.search || null,
+        minPrice: req.query.minPrice || null,
+        maxPrice: req.query.maxPrice || null,
+        minStock: req.query.minStock || null,
+        sort: req.query.sort || 'createdAt_desc'
+      }
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -86,7 +145,7 @@ const getMenuItemById = async (req, res) => {
   }
 };
 
-// @desc    Get menu items by stall with pagination
+// @desc    Get menu items by stall with pagination and filtering
 // @route   GET /api/menu/stall/:stallId
 // @access  Public
 const getMenuItemsByStall = async (req, res) => {
@@ -95,16 +154,64 @@ const getMenuItemsByStall = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
     
-    const totalItems = await MenuItem.countDocuments({ 
+    // Build filter object
+    const filter = { 
       stall: req.params.stallId,
       isActive: true 
-    });
+    };
     
-    const menuItems = await MenuItem.find({ 
-      stall: req.params.stallId,
-      isActive: true 
-    })
-      .sort('-createdAt')
+    // Add category filter if provided
+    if (req.query.category) {
+      filter.category = req.query.category;
+    }
+    
+    // Add search filter if provided
+    if (req.query.search) {
+      filter.$or = [
+        { name: { $regex: req.query.search, $options: 'i' } },
+        { description: { $regex: req.query.search, $options: 'i' } },
+        { category: { $regex: req.query.search, $options: 'i' } }
+      ];
+    }
+    
+    // Add min/max price filters
+    if (req.query.minPrice || req.query.maxPrice) {
+      filter.price = {};
+      if (req.query.minPrice) {
+        filter.price.$gte = parseFloat(req.query.minPrice);
+      }
+      if (req.query.maxPrice) {
+        filter.price.$lte = parseFloat(req.query.maxPrice);
+      }
+    }
+    
+    // Add sorting
+    let sort = '-createdAt';
+    if (req.query.sort) {
+      switch (req.query.sort) {
+        case 'name':
+          sort = 'name';
+          break;
+        case 'name_desc':
+          sort = '-name';
+          break;
+        case 'price':
+          sort = 'price';
+          break;
+        case 'price_desc':
+          sort = '-price';
+          break;
+        case 'createdAt':
+          sort = 'createdAt';
+          break;
+        default:
+          sort = '-createdAt';
+      }
+    }
+    
+    const totalItems = await MenuItem.countDocuments(filter);
+    const menuItems = await MenuItem.find(filter)
+      .sort(sort)
       .skip(skip)
       .limit(limit);
     
@@ -112,7 +219,14 @@ const getMenuItemsByStall = async (req, res) => {
       menuItems,
       currentPage: page,
       totalPages: Math.ceil(totalItems / limit),
-      totalItems
+      totalItems,
+      filters: {
+        category: req.query.category || null,
+        search: req.query.search || null,
+        minPrice: req.query.minPrice || null,
+        maxPrice: req.query.maxPrice || null,
+        sort: req.query.sort || 'createdAt_desc'
+      }
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

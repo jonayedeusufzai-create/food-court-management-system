@@ -21,7 +21,7 @@ const validateStall = [
     .withMessage('Rent must be a positive number')
 ];
 
-// @desc    Get all stalls with pagination
+// @desc    Get all stalls with pagination and advanced filtering
 // @route   GET /api/stalls
 // @access  Public
 const getStalls = async (req, res) => {
@@ -40,13 +40,52 @@ const getStalls = async (req, res) => {
     
     // Add search filter if provided
     if (req.query.search) {
-      filter.name = { $regex: req.query.search, $options: 'i' };
+      filter.$or = [
+        { name: { $regex: req.query.search, $options: 'i' } },
+        { description: { $regex: req.query.search, $options: 'i' } },
+        { category: { $regex: req.query.search, $options: 'i' } }
+      ];
+    }
+    
+    // Add min/max rent filters
+    if (req.query.minRent || req.query.maxRent) {
+      filter.rent = {};
+      if (req.query.minRent) {
+        filter.rent.$gte = parseFloat(req.query.minRent);
+      }
+      if (req.query.maxRent) {
+        filter.rent.$lte = parseFloat(req.query.maxRent);
+      }
+    }
+    
+    // Add sorting
+    let sort = '-createdAt';
+    if (req.query.sort) {
+      switch (req.query.sort) {
+        case 'name':
+          sort = 'name';
+          break;
+        case 'name_desc':
+          sort = '-name';
+          break;
+        case 'rent':
+          sort = 'rent';
+          break;
+        case 'rent_desc':
+          sort = '-rent';
+          break;
+        case 'createdAt':
+          sort = 'createdAt';
+          break;
+        default:
+          sort = '-createdAt';
+      }
     }
     
     const totalStalls = await Stall.countDocuments(filter);
     const stalls = await Stall.find(filter)
       .populate('owner', 'name email')
-      .sort('-createdAt')
+      .sort(sort)
       .skip(skip)
       .limit(limit);
     
@@ -54,7 +93,14 @@ const getStalls = async (req, res) => {
       stalls,
       currentPage: page,
       totalPages: Math.ceil(totalStalls / limit),
-      totalStalls
+      totalStalls,
+      filters: {
+        category: req.query.category || null,
+        search: req.query.search || null,
+        minRent: req.query.minRent || null,
+        maxRent: req.query.maxRent || null,
+        sort: req.query.sort || 'createdAt_desc'
+      }
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -178,10 +224,23 @@ const deleteStall = async (req, res) => {
   }
 };
 
+// @desc    Get stalls owned by logged in user
+// @route   GET /api/stalls/my
+// @access  Private
+const getMyStalls = async (req, res) => {
+  try {
+    const stalls = await Stall.find({ owner: req.user._id });
+    res.json(stalls);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getStalls,
   getStallById,
   createStall,
   updateStall,
-  deleteStall
+  deleteStall,
+  getMyStalls
 };

@@ -1,24 +1,22 @@
 const express = require('express');
 const {
-  getMenuByStall,
+  getMenuItems,
+  getMenuItemsByStall,
   getMenuItemById,
   createMenuItem,
   updateMenuItem,
-  deleteMenuItem,
-  getMenuByCategory
+  deleteMenuItem
 } = require('../controllers/menuController');
 const { protect } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
 router.route('/')
+  .get(getMenuItems)
   .post(protect, createMenuItem);
 
 router.route('/stall/:stallId')
-  .get(getMenuByStall);
-
-router.route('/category/:category')
-  .get(getMenuByCategory);
+  .get(getMenuItemsByStall);
 
 router.route('/:id')
   .get(getMenuItemById)

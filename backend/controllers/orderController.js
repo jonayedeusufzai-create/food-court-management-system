@@ -1,6 +1,14 @@
 const Order = require('../models/Order');
 const { body, validationResult } = require('express-validator');
-const { io, connectedUsers } = require('../server');
+
+// Store io and connectedUsers references
+let io, connectedUsers;
+
+// Function to set io and connectedUsers references
+const setSocketIO = (socketIO, users) => {
+  io = socketIO;
+  connectedUsers = users;
+};
 
 // Validation middleware for creating orders
 const validateOrder = [
@@ -70,7 +78,7 @@ const createOrder = [
   }
 ];
 
-// @desc    Get all orders with pagination
+// @desc    Get all orders with pagination and advanced filtering
 // @route   GET /api/orders
 // @access  Private/Admin
 const getOrders = async (req, res) => {
@@ -79,10 +87,69 @@ const getOrders = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
     
-    const totalOrders = await Order.countDocuments();
-    const orders = await Order.find()
+    // Build filter object
+    const filter = {};
+    
+    // Add customer filter if provided
+    if (req.query.customer) {
+      filter.customer = req.query.customer;
+    }
+    
+    // Add status filter if provided
+    if (req.query.status) {
+      filter.status = req.query.status;
+    }
+    
+    // Add date range filters
+    if (req.query.startDate || req.query.endDate) {
+      filter.createdAt = {};
+      if (req.query.startDate) {
+        filter.createdAt.$gte = new Date(req.query.startDate);
+      }
+      if (req.query.endDate) {
+        filter.createdAt.$lte = new Date(req.query.endDate);
+      }
+    }
+    
+    // Add min/max amount filters
+    if (req.query.minAmount || req.query.maxAmount) {
+      filter.totalAmount = {};
+      if (req.query.minAmount) {
+        filter.totalAmount.$gte = parseFloat(req.query.minAmount);
+      }
+      if (req.query.maxAmount) {
+        filter.totalAmount.$lte = parseFloat(req.query.maxAmount);
+      }
+    }
+    
+    // Add sorting
+    let sort = '-createdAt';
+    if (req.query.sort) {
+      switch (req.query.sort) {
+        case 'amount':
+          sort = 'totalAmount';
+          break;
+        case 'amount_desc':
+          sort = '-totalAmount';
+          break;
+        case 'status':
+          sort = 'status';
+          break;
+        case 'status_desc':
+          sort = '-status';
+          break;
+        case 'createdAt':
+          sort = 'createdAt';
+          break;
+        default:
+          sort = '-createdAt';
+      }
+    }
+    
+    const totalOrders = await Order.countDocuments(filter);
+    const orders = await Order.find(filter)
       .populate('customer', 'name email')
-      .sort('-createdAt')
+      .sort(sort)
       .skip(skip)
       .limit(limit);
     
@@ -90,7 +157,16 @@ const getOrders = async (req, res) => {
       orders,
       currentPage: page,
       totalPages: Math.ceil(totalOrders / limit),
-      totalOrders
+      totalOrders,
+      filters: {
+        customer: req.query.customer || null,
+        status: req.query.status || null,
+        startDate: req.query.startDate || null,
+        endDate: req.query.endDate || null,
+        minAmount: req.query.minAmount || null,
+        maxAmount: req.query.maxAmount || null,
+        sort: req.query.sort || 'createdAt_desc'
+      }
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -174,7 +250,7 @@ const updateOrderStatus = [
   }
 ];
 
-// @desc    Get orders by customer with pagination
+// @desc    Get orders by customer with pagination and filtering
 // @route   GET /api/orders/customer/:customerId
 // @access  Private
 const getOrdersByCustomer = async (req, res) => {
@@ -183,9 +259,63 @@ const getOrdersByCustomer = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
     
-    const totalOrders = await Order.countDocuments({ customer: req.params.customerId });
-    const orders = await Order.find({ customer: req.params.customerId })
-      .sort('-createdAt')
+    // Build filter object
+    const filter = { customer: req.params.customerId };
+    
+    // Add status filter if provided
+    if (req.query.status) {
+      filter.status = req.query.status;
+    }
+    
+    // Add date range filters
+    if (req.query.startDate || req.query.endDate) {
+      filter.createdAt = {};
+      if (req.query.startDate) {
+        filter.createdAt.$gte = new Date(req.query.startDate);
+      }
+      if (req.query.endDate) {
+        filter.createdAt.$lte = new Date(req.query.endDate);
+      }
+    }
+    
+    // Add min/max amount filters
+    if (req.query.minAmount || req.query.maxAmount) {
+      filter.totalAmount = {};
+      if (req.query.minAmount) {
+        filter.totalAmount.$gte = parseFloat(req.query.minAmount);
+      }
+      if (req.query.maxAmount) {
+        filter.totalAmount.$lte = parseFloat(req.query.maxAmount);
+      }
+    }
+    
+    // Add sorting
+    let sort = '-createdAt';
+    if (req.query.sort) {
+      switch (req.query.sort) {
+        case 'amount':
+          sort = 'totalAmount';
+          break;
+        case 'amount_desc':
+          sort = '-totalAmount';
+          break;
+        case 'status':
+          sort = 'status';
+          break;
+        case 'status_desc':
+          sort = '-status';
+          break;
+        case 'createdAt':
+          sort = 'createdAt';
+          break;
+        default:
+          sort = '-createdAt';
+      }
+    }
+    
+    const totalOrders = await Order.countDocuments(filter);
+    const orders = await Order.find(filter)
+      .sort(sort)
       .skip(skip)
       .limit(limit);
     
@@ -193,14 +323,22 @@ const getOrdersByCustomer = async (req, res) => {
       orders,
       currentPage: page,
       totalPages: Math.ceil(totalOrders / limit),
-      totalOrders
+      totalOrders,
+      filters: {
+        status: req.query.status || null,
+        startDate: req.query.startDate || null,
+        endDate: req.query.endDate || null,
+        minAmount: req.query.minAmount || null,
+        maxAmount: req.query.maxAmount || null,
+        sort: req.query.sort || 'createdAt_desc'
+      }
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// @desc    Get orders by stall with pagination
+// @desc    Get orders by stall with pagination and filtering
 // @route   GET /api/orders/stall/:stallId
 // @access  Private
 const getOrdersByStall = async (req, res) => {
@@ -209,11 +347,65 @@ const getOrdersByStall = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
     
+    // Build filter object
     // This would require updating the Order model to include stall information
-    // For now, we'll return all orders with pagination
-    const totalOrders = await Order.countDocuments();
-    const orders = await Order.find()
-      .sort('-createdAt')
+    // For now, we'll return all orders with filtering
+    const filter = {};
+    
+    // Add status filter if provided
+    if (req.query.status) {
+      filter.status = req.query.status;
+    }
+    
+    // Add date range filters
+    if (req.query.startDate || req.query.endDate) {
+      filter.createdAt = {};
+      if (req.query.startDate) {
+        filter.createdAt.$gte = new Date(req.query.startDate);
+      }
+      if (req.query.endDate) {
+        filter.createdAt.$lte = new Date(req.query.endDate);
+      }
+    }
+    
+    // Add min/max amount filters
+    if (req.query.minAmount || req.query.maxAmount) {
+      filter.totalAmount = {};
+      if (req.query.minAmount) {
+        filter.totalAmount.$gte = parseFloat(req.query.minAmount);
+      }
+      if (req.query.maxAmount) {
+        filter.totalAmount.$lte = parseFloat(req.query.maxAmount);
+      }
+    }
+    
+    // Add sorting
+    let sort = '-createdAt';
+    if (req.query.sort) {
+      switch (req.query.sort) {
+        case 'amount':
+          sort = 'totalAmount';
+          break;
+        case 'amount_desc':
+          sort = '-totalAmount';
+          break;
+        case 'status':
+          sort = 'status';
+          break;
+        case 'status_desc':
+          sort = '-status';
+          break;
+        case 'createdAt':
+          sort = 'createdAt';
+          break;
+        default:
+          sort = '-createdAt';
+      }
+    }
+    
+    const totalOrders = await Order.countDocuments(filter);
+    const orders = await Order.find(filter)
+      .sort(sort)
       .skip(skip)
       .limit(limit);
     
@@ -221,7 +413,15 @@ const getOrdersByStall = async (req, res) => {
       orders,
       currentPage: page,
       totalPages: Math.ceil(totalOrders / limit),
-      totalOrders
+      totalOrders,
+      filters: {
+        status: req.query.status || null,
+        startDate: req.query.startDate || null,
+        endDate: req.query.endDate || null,
+        minAmount: req.query.minAmount || null,
+        maxAmount: req.query.maxAmount || null,
+        sort: req.query.sort || 'createdAt_desc'
+      }
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -234,5 +434,6 @@ module.exports = {
   getOrderById,
   updateOrderStatus,
   getOrdersByCustomer,
-  getOrdersByStall
+  getOrdersByStall,
+  setSocketIO
 };
