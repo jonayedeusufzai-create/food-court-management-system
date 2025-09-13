@@ -27,6 +27,14 @@ const stallSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     default: true
+  },
+  averageRating: {
+    type: Number,
+    default: 0
+  },
+  totalRatings: {
+    type: Number,
+    default: 0
   }
 }, {
   timestamps: true
@@ -37,5 +45,6 @@ stallSchema.index({ owner: 1 });
 stallSchema.index({ category: 1 });
 stallSchema.index({ isActive: 1 });
 stallSchema.index({ name: 1 });
+stallSchema.index({ averageRating: -1 }); // Index for sorting by rating
 
 module.exports = mongoose.model('Stall', stallSchema);

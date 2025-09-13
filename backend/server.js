@@ -21,6 +21,7 @@ const orderRoutes = require('./routes/orderRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
+const ratingRoutes = require('./routes/ratingRoutes');
 
 // Initialize app
 const app = express();
@@ -28,17 +29,25 @@ const server = http.createServer(app);
 
 // Rate limiting
 const rateLimiter = new RateLimiterMemory({
-  points: 100, // 100 requests
-  duration: 15 * 60, // per 15 minutes
+  points: 100, // Increased from 10 to 100 points
+  duration: 1, // per 1 second
 });
 
 const rateLimiterMiddleware = (req, res, next) => {
+  // Skip rate limiting for development
+  if (process.env.NODE_ENV === 'development') {
+    return next();
+  }
+  
   rateLimiter.consume(req.ip)
     .then(() => {
       next();
     })
     .catch(() => {
-      res.status(429).json({ message: 'Too many requests, please try again later.' });
+      res.status(429).json({ 
+        error: 'Too Many Requests',
+        message: 'You have exceeded the rate limit. Please try again later.'
+      });
     });
 };
 
@@ -118,6 +127,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/ratings', ratingRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'TheTreeHousse - Food Court Management System API' });

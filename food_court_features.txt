@@ -1,0 +1,85 @@
+FOOD COURT MANAGEMENT SYSTEM - FEATURES
+
+1. USER MANAGEMENT
+   - Customer Registration with Email Verification
+   - Customer Login/Logout with JWT Authentication
+   - Admin Login with Role-Based Access Control
+   - User Profile Management
+   - Password Reset Functionality
+
+2. STALL MANAGEMENT
+   - Browse Available Food Stalls
+   - View Stall Details (Name, Category, Description, Rating)
+   - Search and Filter Stalls by Cuisine Type
+   - Stall Owner Management (for admin)
+   - Stall Performance Analytics (for admin)
+
+3. MENU MANAGEMENT
+   - View Menus by Stall
+   - Browse Menu Items with Details (Name, Description, Price)
+   - Add Items to Cart from Multiple Stalls
+   - Menu Item Management (for stall owners)
+   - Menu Categorization (Appetizers, Main Course, Desserts, etc.)
+
+4. CART & ORDER MANAGEMENT
+   - Multi-Stall Shopping Cart
+   - Add/Remove Items from Cart
+   - Adjust Item Quantities
+   - Real-Time Cart Total Calculation
+   - VAT and Delivery Fee Calculation
+   - Order Placement and Confirmation
+   - Order History Tracking
+
+5. ORDER TRACKING
+   - Real-Time Order Status Updates
+   - Order Progress Visualization (Pending → Preparing → Ready → Completed)
+   - Estimated Delivery Time
+   - Order Notifications (Email/SMS)
+
+6. PAYMENT SYSTEM
+   - Multiple Payment Options (Bikash, Nagad, Rocket, Cash on Delivery)
+   - Secure Payment Processing
+   - Payment Confirmation and Receipts
+   - Transaction History
+
+7. ADMIN DASHBOARD
+   - Overall System Performance Monitoring
+   - Stall Management (Add/Edit/Remove Stalls)
+   - User Account Management
+   - Order Management and Tracking
+   - Sales Reports and Analytics
+   - Stall Ranking Based on Performance
+   - Rent and Billing Management
+
+8. REPORTING & ANALYTICS
+   - Sales Performance Reports
+   - Popular Items and Stalls Analytics
+   - Revenue Generation Tracking
+   - Customer Behavior Analysis
+   - Inventory Usage Reports
+
+9. NOTIFICATION SYSTEM
+   - Order Status Updates
+   - Payment Confirmations
+   - Promotional Announcements
+   - System Maintenance Alerts
+
+10. RESPONSIVE DESIGN
+    - Mobile-Friendly Interface
+    - Cross-Browser Compatibility
+    - Intuitive User Experience
+    - Fast Loading Times
+
+11. SECURITY FEATURES
+    - JWT Token-Based Authentication
+    - Password Encryption
+    - Role-Based Access Control
+    - Input Validation and Sanitization
+    - Protection Against Common Web Vulnerabilities
+
+12. ADDITIONAL FEATURES
+    - Customer Reviews and Ratings
+    - Favorite Items/Stalls
+    - Order History and Reordering
+    - Contact and Support System
+    - Privacy Policy and Terms of Service

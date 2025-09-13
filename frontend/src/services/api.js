@@ -110,4 +110,11 @@ export const cartAPI = {
   clearCart: () => API.delete('/cart'),
 };
 
+// Rating API calls
+export const ratingAPI = {
+  rateStall: (ratingData) => API.post('/ratings/rate', ratingData),
+  getStallRatings: (stallId) => API.get(`/ratings/stall/${stallId}`),
+  getUserRating: (stallId) => API.get(`/ratings/user/${stallId}`),
+};
+
 export default API;
