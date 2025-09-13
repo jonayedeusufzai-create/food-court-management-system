@@ -1,0 +1,118 @@
+# Food Court Management System - Menu Items Summary
+
+## Overview
+This document summarizes the dummy menu data created for the 10 stalls in the food court management system. Each stall has 4 menu items with Bangladeshi-style names, descriptions, and prices in BDT (৳).
+
+## Stalls and Menu Items
+
+### 1. Kacchi Bhai
+Specialty: Biryani & Roast
+- Kacchi Biryani (কাচ্চি বিরিয়ানি) – ৳250
+  Aromatic rice with mutton & spices
+- Chicken Roast (চিকেন রোস্ট) – ৳120
+  Traditional roast with gravy
+- Morog Polao (মোরগ পোলাও) – ৳200
+  Fragrant rice with chicken
+- Firni (ফিরনি) – ৳80
+  Traditional dessert with milk & rice flour
+
+### 2. Burger Buzz
+Specialty: Burgers & Fast Food
+- Classic Beef Burger – ৳180
+  Juicy beef patty with cheese & mayo
+- Crispy Chicken Burger – ৳160
+  Fried chicken fillet with spicy sauce
+- French Fries (Large) – ৳100
+  Golden crispy fries
+- Cheesy Sandwich – ৳120
+  Toasted bread with melted cheese
+
+### 3. Noodle Nirvana
+Specialty: Noodles & Rice
+- Chicken Chowmein – ৳160
+  Stir-fried noodles with chicken & veggies
+- Beef Ramen Bowl – ৳220
+  Japanese-style ramen with beef
+- Egg Fried Rice – ৳120
+  Rice tossed with eggs & soy sauce
+- Thai Soup (Large) – ৳150
+  Spicy soup with chicken & veggies
+
+### 4. Fried Chicken Express
+Specialty: Fried Chicken & Sides
+- 2 pcs Crispy Chicken – ৳150
+  Crispy golden fried chicken
+- Chicken Bucket (6 pcs) – ৳450
+  Perfect for sharing
+- Zinger Burger – ৳180
+  Crispy chicken burger with mayo
+- Mashed Potato with Gravy – ৳100
+
+### 5. Star Kabab & Curry
+Specialty: Kabab & Deshi Curries
+- Beef Sheek Kabab (2 pcs) – ৳160
+  Spicy beef kababs grilled to perfection
+- Mutton Rezala – ৳220
+  Creamy curry with mutton pieces
+- Paratha (2 pcs) – ৳40
+  Soft & flaky bread
+- Chicken Curry – ৳140
+
+### 6. Sweet Treats
+Specialty: Desserts & Sweets
+- Faluda – ৳120
+  Sweet milkshake with ice cream & jelly
+- Rasgulla (2 pcs) – ৳60
+  Spongy traditional sweet
+- Chocolate Ice Cream (Cup) – ৳90
+  Rich creamy ice cream
+- Mishti Doi – ৳70
+
+### 7. Cha Wala
+Specialty: Tea & Coffee
+- Special Milk Tea (দুধ চা) – ৳30
+  Classic Bangladeshi tea
+- Iced Lemon Tea – ৳50
+  Refreshing chilled tea
+- Cold Coffee – ৳80
+  Coffee blended with milk & ice
+- Ginger Tea – ৳40
+
+### 8. Pizza Hub
+Specialty: Pizza & Pasta
+- Margherita Pizza (Medium) – ৳450
+  Cheese & tomato classic
+- Pepperoni Pizza (Medium) – ৳550
+  Spicy pepperoni with cheese
+- Spaghetti Bolognese – ৳300
+  Pasta with meat sauce
+- Garlic Bread (4 pcs) – ৳120
+
+### 9. Juice Junction
+Specialty: Fresh Juices & Drinks
+- Mango Juice – ৳80
+  Seasonal fresh mango juice
+- Watermelon Juice – ৳70
+  Refreshing summer drink
+- Banana Milkshake – ৳90
+  Sweet creamy shake
+- Lassi (Salt/Sweet) – ৳60
+
+### 10. Sultan's Dine Express
+Specialty: Premium Biryani & Platters
+- Mutton Kacchi Biryani – ৳320
+  Premium kacchi with mutton pieces
+- Beef Tehari – ৳250
+  Spiced rice with beef chunks
+- Chicken Jali Kabab (2 pcs) – ৳120
+  Minced chicken kabab
+- Firni with Jorda – ৳100
+
+## Total Items
+- 10 stalls × 4 items each = 40 menu items
+
+## Implementation Status
+✅ All 40 menu items have been successfully added to the database
+✅ MenuPage component created for displaying stall menus
+✅ View Menu functionality integrated with the dashboard
+✅ Responsive design with hover effects and proper styling

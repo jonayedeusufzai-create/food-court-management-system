@@ -1,13 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../redux/slices/authSlice';
+import { cartAPI } from '../../services/api';
 import './MainLayout.css';
 
 const MainLayout = ({ children }) => {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchCartCount();
+    }
+  }, [isAuthenticated]);
+
+  const fetchCartCount = async () => {
+    try {
+      const response = await cartAPI.getCart();
+      const items = response.data.items || [];
+      const count = items.reduce((total, item) => total + item.quantity, 0);
+      setCartCount(count);
+    } catch (err) {
+      console.error('Failed to fetch cart count:', err);
+    }
+  };
 
   const handleLogout = () => {
     dispatch(logout());
@@ -43,6 +62,9 @@ const MainLayout = ({ children }) => {
               {isAuthenticated ? (
                 <div className="user-menu">
                   <span className="user-greeting">Hi, {user?.name}</span>
+                  <button className="cart-btn" onClick={() => navigate('/cart')}>
+                    🛒 Cart {cartCount > 0 && <span className="cart-count-badge">{cartCount}</span>}
+                  </button>
                   <button className="logout-btn" onClick={handleLogout}>
                     Logout
                   </button>

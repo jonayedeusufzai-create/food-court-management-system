@@ -249,14 +249,14 @@ const createMenuItem = [
         });
       }
 
-      const { name, description, price, category, stock, image } = req.body;
+      const { name, description, price, category, stock, image, stall } = req.body;
       
       // Create menu item
       const menuItem = await MenuItem.create({
         name,
         description,
         price,
-        stall: req.user._id, // This should be the stall ID, not user ID
+        stall, // Use the stall ID from the request body
         category,
         stock,
         image

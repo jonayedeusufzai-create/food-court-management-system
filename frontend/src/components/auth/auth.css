@@ -1,7 +1,8 @@
 /* Auth Container Styles */
 .login-container,
 .register-container,
-.verify-email-container {
+.verify-email-container,
+.auth-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -11,7 +12,8 @@
 }
 
 /* Auth Card Styles */
-.auth-card {
+.auth-card,
+.auth-form {
   background: white;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -21,12 +23,14 @@
   margin: 0 auto;
 }
 
-.auth-header {
+.auth-header,
+.auth-title {
   text-align: center;
   margin-bottom: 2rem;
 }
 
-.auth-header h2 {
+.auth-header h2,
+.auth-title {
   color: #2a9d8f; /* Improved color contrast */
   margin-bottom: 0.5rem;
   font-size: 1.8rem;
@@ -98,16 +102,23 @@
 }
 
 /* Error Text */
-.error-text {
+.error-text,
+.auth-error {
   display: block;
   color: #e63946; /* Improved color contrast */
   font-size: 0.875rem;
   margin-top: 0.25rem;
   font-weight: 500;
+  text-align: center;
+  padding: 10px;
+  background-color: #ffebee;
+  border-radius: 4px;
+  margin-bottom: 15px;
 }
 
 /* Button Styles */
-.auth-btn {
+.auth-btn,
+.auth-button {
   width: 100%;
   padding: 0.75rem;
   background-color: #ff6b35; /* Brand color with good contrast */
@@ -120,20 +131,24 @@
   transition: background-color 0.3s ease;
 }
 
-.auth-btn:hover:not(:disabled) {
+.auth-btn:hover:not(:disabled),
+.auth-button:hover:not(:disabled) {
   background-color: #e55a2b; /* Darker shade for hover state */
 }
 
-.auth-btn:disabled {
+.auth-btn:disabled,
+.auth-button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
 
-.auth-btn[aria-busy="true"] {
+.auth-btn[aria-busy="true"],
+.auth-button[aria-busy="true"] {
   position: relative;
 }
 
-.auth-btn[aria-busy="true"]::after {
+.auth-btn[aria-busy="true"]::after,
+.auth-button[aria-busy="true"]::after {
   content: "";
   position: absolute;
   width: 1rem;
@@ -155,6 +170,7 @@
 .auth-footer {
   text-align: center;
   color: #666; /* Improved color contrast */
+  margin-top: 1.5rem;
 }
 
 .auth-footer a {
@@ -186,7 +202,8 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .auth-card {
+  .auth-card,
+  .auth-form {
     padding: 1.5rem;
     margin: 1rem;
   }
@@ -196,7 +213,8 @@
     gap: 0;
   }
   
-  .auth-header h2 {
+  .auth-header h2,
+  .auth-title {
     font-size: 1.5rem;
   }
 }

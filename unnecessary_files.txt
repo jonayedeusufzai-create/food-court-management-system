@@ -1,0 +1,32 @@
+UNNECESSARY FILES TO DELETE
+
+ROOT DIRECTORY:
+1. add_menu_items_fixed.js - Debug/test file
+2. check_admin.js - Debug/test file
+3. debug_auth.js - Debug file
+4. debug_browser.html - Debug file
+5. debug_routing.js - Debug file
+6. delete_menu_items.js - Debug/test file
+7. menu_data.json - Duplicate data file
+8. simple-login.html - Test file
+9. test_app_render.js - Test file
+10. test_frontend.html - Test file
+11. test_login_page.html - Test file
+12. test_login_render.js - Test file
+13. test_registration.js - Test file
+
+FRONTEND DIRECTORY:
+1. test_api_connection.js - Test file
+2. test_registration.html - Test file
+
+BACKEND DIRECTORY:
+1. check_admin.js - Debug/test file
+2. check_user_details.js - Debug/test file
+3. create_admin.js - Duplicate admin creation script
+4. create_correct_admin.js - Duplicate admin creation script
+5. create_new_admin.js - Duplicate admin creation script
+6. reset_admin_password.js - Debug/test file
+7. test_password.js - Debug/test file
+8. verify_admin_user.js - Debug/test file
+
+These files are not needed for the production application and can be safely removed to clean up the project structure.

@@ -1,10 +1,105 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { cartAPI } from '../../services/api';
 import './dashboard.css';
 
 const CustomerDashboard = () => {
+  const [cart, setCart] = useState({
+    items: [],
+    totalAmount: 0
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchCart();
+  }, []);
+
+  const fetchCart = async () => {
+    try {
+      const response = await cartAPI.getCart();
+      setCart(response.data);
+      setLoading(false);
+    } catch (err) {
+      console.error('Failed to fetch cart:', err);
+      setLoading(false);
+    }
+  };
+
+  // Calculate VAT (8%) and delivery charge
+  const vat = cart.totalAmount * 0.08;
+  const deliveryCharge = 2.99;
+  const totalBill = cart.totalAmount + vat + deliveryCharge;
+
   return (
     <div className="dashboard">
+      {/* Cart Summary at Top */}
+      <div className="dashboard-header">
+        <div className="cart-summary-container">
+          <div className="cart-icon-container">
+            <Link to="/cart" className="cart-icon-link">
+              <span className="cart-icon">🛒</span>
+              <span className="cart-text">My Cart</span>
+              {cart.items.length > 0 && (
+                <span className="cart-count">{cart.items.length}</span>
+              )}
+            </Link>
+          </div>
+          
+          {!loading && cart.items.length > 0 && (
+            <div className="cart-summary">
+              <div className="cart-items-summary">
+                <h3>Your Cart ({cart.items.length} items)</h3>
+                <div className="cart-items-list">
+                  {cart.items.slice(0, 3).map((item) => (
+                    <div key={item._id} className="cart-item-summary">
+                      <span className="item-name">{item.menuItem.name}</span>
+                      <span className="item-quantity">x{item.quantity}</span>
+                      <span className="item-price">${(item.quantity * item.price).toFixed(2)}</span>
+                    </div>
+                  ))}
+                  {cart.items.length > 3 && (
+                    <div className="cart-item-summary">
+                      <span className="item-name">+ {cart.items.length - 3} more items</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <div className="cart-totals">
+                <div className="total-row">
+                  <span>Subtotal:</span>
+                  <span>${cart.totalAmount.toFixed(2)}</span>
+                </div>
+                <div className="total-row">
+                  <span>VAT (8%):</span>
+                  <span>${vat.toFixed(2)}</span>
+                </div>
+                <div className="total-row">
+                  <span>Delivery Charge:</span>
+                  <span>${deliveryCharge.toFixed(2)}</span>
+                </div>
+                <div className="total-row grand-total">
+                  <span>Total Bill:</span>
+                  <span>${totalBill.toFixed(2)}</span>
+                </div>
+                <Link to="/cart" className="btn btn-primary checkout-btn">
+                  Checkout
+                </Link>
+              </div>
+            </div>
+          )}
+          
+          {!loading && cart.items.length === 0 && (
+            <div className="empty-cart-message">
+              <p>Your cart is empty. Add some delicious items!</p>
+              <Link to="/stalls" className="btn btn-primary">
+                Browse Restaurants
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
+      
       {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-content">

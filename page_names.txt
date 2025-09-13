@@ -1,0 +1,40 @@
+# TheTreeHousse - Food Court Management System
+## Page Names
+
+### Authentication Pages
+1. Registration Page
+2. Login Page
+3. Email Verification Page
+
+### Customer Pages
+4. Customer Dashboard
+5. Stalls Listing Page
+6. Stall Menu Page
+7. Shopping Cart Page
+8. Checkout Page
+9. Orders History Page
+10. Order Details Page
+11. Profile Management Page
+
+### Stall Owner Pages
+12. Stall Owner Dashboard
+13. Menu Management Page
+14. Order Management Page
+15. Stall Management Page
+
+### Food Court Owner Pages
+16. Food Court Owner Dashboard
+17. Reports Page
+18. Report Details Page
+19. Analytics Dashboard
+20. Admin Dashboard
+
+### General Pages
+21. Home Page
+22. Profile Page
+
+### Component Pages
+23. Main Layout (Wrapper for all pages)
+24. Error Boundary Page (Error handling)
+
+Total: 24 pages/components

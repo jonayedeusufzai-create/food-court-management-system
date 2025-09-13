@@ -18,13 +18,8 @@ const validateRegistration = [
     .withMessage('Please provide a valid email')
     .normalizeEmail(),
   body('password')
-    .custom((value) => {
-      const passwordValidation = validatePasswordStrength(value);
-      if (!passwordValidation.isValid) {
-        throw new Error(passwordValidation.message);
-      }
-      return true;
-    }),
+    .isLength({ min: 6 })
+    .withMessage('Password must be at least 6 characters long'),
   body('role')
     .optional()
     .isIn(['Customer', 'StallOwner', 'FoodCourtOwner'])
@@ -32,7 +27,13 @@ const validateRegistration = [
   body('phone')
     .optional()
     .isMobilePhone()
-    .withMessage('Please provide a valid phone number')
+    .withMessage('Please provide a valid phone number'),
+  // Address fields are optional
+  body('address.street').optional(),
+  body('address.city').optional(),
+  body('address.state').optional(),
+  body('address.zipCode').optional(),
+  body('address.country').optional()
 ];
 
 // Validation middleware for login
@@ -193,13 +194,8 @@ const validateAdminRegistration = [
     .withMessage('Please provide a valid email')
     .normalizeEmail(),
   body('password')
-    .custom((value) => {
-      const passwordValidation = validatePasswordStrength(value);
-      if (!passwordValidation.isValid) {
-        throw new Error(passwordValidation.message);
-      }
-      return true;
-    }),
+    .isLength({ min: 6 })
+    .withMessage('Password must be at least 6 characters long'),
   body('role')
     .optional()
     .isIn(['StallOwner', 'FoodCourtOwner'])

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { authAPI } from '../../services/api';
+import { authAPI, userAPI } from '../../services/api';
 
 // Async thunks
 export const registerUser = createAsyncThunk(
@@ -12,7 +12,13 @@ export const registerUser = createAsyncThunk(
       return response.data;
     } catch (error) {
       console.error('Registration error:', error);
-      return rejectWithValue(error.response?.data || { message: 'Registration failed' });
+      // Handle different types of errors
+      if (error.response && error.response.data) {
+        return rejectWithValue(error.response.data);
+      } else if (error.message) {
+        return rejectWithValue({ message: error.message });
+      }
+      return rejectWithValue({ message: 'Registration failed' });
     }
   }
 );
@@ -21,12 +27,23 @@ export const loginUser = createAsyncThunk(
   'auth/login',
   async (userData, { rejectWithValue }) => {
     try {
+      console.log('Logging in with data:', userData);
       const response = await authAPI.login(userData);
+      console.log('Login response:', response.data);
       // Save token to localStorage
-      localStorage.setItem('token', response.data.token);
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+      }
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || { message: 'Login failed' });
+      console.error('Login error:', error);
+      // Handle different types of errors
+      if (error.response && error.response.data) {
+        return rejectWithValue(error.response.data);
+      } else if (error.message) {
+        return rejectWithValue({ message: error.message });
+      }
+      return rejectWithValue({ message: 'Login failed' });
     }
   }
 );
@@ -40,12 +57,17 @@ export const loadUser = createAsyncThunk(
         throw new Error('No token found');
       }
       
-      // TODO: Implement user loading from token
-      // This would typically be an API call to get user data
-      return null;
+      // Get user profile from API
+      const response = await userAPI.getProfile();
+      return response.data;
     } catch (error) {
       localStorage.removeItem('token');
-      return rejectWithValue('Failed to load user');
+      if (error.response && error.response.data) {
+        return rejectWithValue(error.response.data);
+      } else if (error.message) {
+        return rejectWithValue({ message: error.message });
+      }
+      return rejectWithValue({ message: 'Failed to load user' });
     }
   }
 );
@@ -79,13 +101,14 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        state.user = action.payload.user || action.payload;
         state.token = action.payload.token;
         state.isAuthenticated = true;
+        console.log('Registration fulfilled:', action.payload);
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message || 'Registration failed';
+        state.error = action.payload;
         console.error('Registration rejected:', action.payload);
       })
       
@@ -96,13 +119,15 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        state.user = action.payload.user || action.payload;
         state.token = action.payload.token;
         state.isAuthenticated = true;
+        console.log('Login fulfilled:', action.payload);
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message || 'Login failed';
+        state.error = action.payload;
+        console.error('Login rejected:', action.payload);
       })
       
       // Load user
@@ -114,10 +139,11 @@ const authSlice = createSlice({
         state.user = action.payload;
         state.isAuthenticated = true;
       })
-      .addCase(loadUser.rejected, (state) => {
+      .addCase(loadUser.rejected, (state, action) => {
         state.loading = false;
         state.user = null;
         state.isAuthenticated = false;
+        state.error = action.payload;
       });
   },
 });

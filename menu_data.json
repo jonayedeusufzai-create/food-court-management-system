@@ -1,0 +1,304 @@
+{
+  "stalls": [
+    {
+      "id": "68c47028466e6d84c381e14d",
+      "name": "Kacchi Bhai",
+      "items": [
+        {
+          "name": "Kacchi Biryani (কাচ্চি বিরিয়ানি)",
+          "description": "Aromatic rice with mutton & spices",
+          "price": 250,
+          "category": "Biryani"
+        },
+        {
+          "name": "Chicken Roast (চিকেন রোস্ট)",
+          "description": "Traditional roast with gravy",
+          "price": 120,
+          "category": "Curry"
+        },
+        {
+          "name": "Morog Polao (মোরগ পোলাও)",
+          "description": "Fragrant rice with chicken",
+          "price": 200,
+          "category": "Biryani"
+        },
+        {
+          "name": "Firni (ফিরনি)",
+          "description": "Traditional dessert with milk & rice flour",
+          "price": 80,
+          "category": "Dessert"
+        }
+      ]
+    },
+    {
+      "id": "68c47039466e6d84c381e150",
+      "name": "Burger Buzz",
+      "items": [
+        {
+          "name": "Classic Beef Burger",
+          "description": "Juicy beef patty with cheese & mayo",
+          "price": 180,
+          "category": "Burger"
+        },
+        {
+          "name": "Crispy Chicken Burger",
+          "description": "Fried chicken fillet with spicy sauce",
+          "price": 160,
+          "category": "Burger"
+        },
+        {
+          "name": "French Fries (Large)",
+          "description": "Golden crispy fries",
+          "price": 100,
+          "category": "Sides"
+        },
+        {
+          "name": "Cheesy Sandwich",
+          "description": "Toasted bread with melted cheese",
+          "price": 120,
+          "category": "Sandwich"
+        }
+      ]
+    },
+    {
+      "id": "68c47039466e6d84c381e153",
+      "name": "Noodle Nirvana",
+      "items": [
+        {
+          "name": "Chicken Chowmein",
+          "description": "Stir-fried noodles with chicken & veggies",
+          "price": 160,
+          "category": "Noodles"
+        },
+        {
+          "name": "Beef Ramen Bowl",
+          "description": "Japanese-style ramen with beef",
+          "price": 220,
+          "category": "Noodles"
+        },
+        {
+          "name": "Egg Fried Rice",
+          "description": "Rice tossed with eggs & soy sauce",
+          "price": 120,
+          "category": "Rice"
+        },
+        {
+          "name": "Thai Soup (Large)",
+          "description": "Spicy soup with chicken & veggies",
+          "price": 150,
+          "category": "Soup"
+        }
+      ]
+    },
+    {
+      "id": "68c47039466e6d84c381e156",
+      "name": "Fried Chicken Express",
+      "items": [
+        {
+          "name": "2 pcs Crispy Chicken",
+          "description": "Crispy golden fried chicken",
+          "price": 150,
+          "category": "Chicken"
+        },
+        {
+          "name": "Chicken Bucket (6 pcs)",
+          "description": "Perfect for sharing",
+          "price": 450,
+          "category": "Chicken"
+        },
+        {
+          "name": "Zinger Burger",
+          "description": "Crispy chicken burger with mayo",
+          "price": 180,
+          "category": "Burger"
+        },
+        {
+          "name": "Mashed Potato with Gravy",
+          "description": "",
+          "price": 100,
+          "category": "Sides"
+        }
+      ]
+    },
+    {
+      "id": "68c47039466e6d84c381e159",
+      "name": "Star Kabab & Curry",
+      "items": [
+        {
+          "name": "Beef Sheek Kabab (2 pcs)",
+          "description": "Spicy beef kababs grilled to perfection",
+          "price": 160,
+          "category": "Kabab"
+        },
+        {
+          "name": "Mutton Rezala",
+          "description": "Creamy curry with mutton pieces",
+          "price": 220,
+          "category": "Curry"
+        },
+        {
+          "name": "Paratha (2 pcs)",
+          "description": "Soft & flaky bread",
+          "price": 40,
+          "category": "Bread"
+        },
+        {
+          "name": "Chicken Curry",
+          "description": "",
+          "price": 140,
+          "category": "Curry"
+        }
+      ]
+    },
+    {
+      "id": "68c47052466e6d84c381e15c",
+      "name": "Sweet Treats",
+      "items": [
+        {
+          "name": "Faluda",
+          "description": "Sweet milkshake with ice cream & jelly",
+          "price": 120,
+          "category": "Dessert"
+        },
+        {
+          "name": "Rasgulla (2 pcs)",
+          "description": "Spongy traditional sweet",
+          "price": 60,
+          "category": "Dessert"
+        },
+        {
+          "name": "Chocolate Ice Cream (Cup)",
+          "description": "Rich creamy ice cream",
+          "price": 90,
+          "category": "Dessert"
+        },
+        {
+          "name": "Mishti Doi",
+          "description": "",
+          "price": 70,
+          "category": "Dessert"
+        }
+      ]
+    },
+    {
+      "id": "68c47052466e6d84c381e15f",
+      "name": "Cha Wala",
+      "items": [
+        {
+          "name": "Special Milk Tea (দুধ চা)",
+          "description": "Classic Bangladeshi tea",
+          "price": 30,
+          "category": "Tea"
+        },
+        {
+          "name": "Iced Lemon Tea",
+          "description": "Refreshing chilled tea",
+          "price": 50,
+          "category": "Tea"
+        },
+        {
+          "name": "Cold Coffee",
+          "description": "Coffee blended with milk & ice",
+          "price": 80,
+          "category": "Coffee"
+        },
+        {
+          "name": "Ginger Tea",
+          "description": "",
+          "price": 40,
+          "category": "Tea"
+        }
+      ]
+    },
+    {
+      "id": "68c47052466e6d84c381e162",
+      "name": "Pizza Hub",
+      "items": [
+        {
+          "name": "Margherita Pizza (Medium)",
+          "description": "Cheese & tomato classic",
+          "price": 450,
+          "category": "Pizza"
+        },
+        {
+          "name": "Pepperoni Pizza (Medium)",
+          "description": "Spicy pepperoni with cheese",
+          "price": 550,
+          "category": "Pizza"
+        },
+        {
+          "name": "Spaghetti Bolognese",
+          "description": "Pasta with meat sauce",
+          "price": 300,
+          "category": "Pasta"
+        },
+        {
+          "name": "Garlic Bread (4 pcs)",
+          "description": "",
+          "price": 120,
+          "category": "Sides"
+        }
+      ]
+    },
+    {
+      "id": "68c47052466e6d84c381e165",
+      "name": "Juice Junction",
+      "items": [
+        {
+          "name": "Mango Juice",
+          "description": "Seasonal fresh mango juice",
+          "price": 80,
+          "category": "Juice"
+        },
+        {
+          "name": "Watermelon Juice",
+          "description": "Refreshing summer drink",
+          "price": 70,
+          "category": "Juice"
+        },
+        {
+          "name": "Banana Milkshake",
+          "description": "Sweet creamy shake",
+          "price": 90,
+          "category": "Milkshake"
+        },
+        {
+          "name": "Lassi (Salt/Sweet)",
+          "description": "",
+          "price": 60,
+          "category": "Drink"
+        }
+      ]
+    },
+    {
+      "id": "68c47059466e6d84c381e168",
+      "name": "Sultan's Dine Express",
+      "items": [
+        {
+          "name": "Mutton Kacchi Biryani",
+          "description": "Premium kacchi with mutton pieces",
+          "price": 320,
+          "category": "Biryani"
+        },
+        {
+          "name": "Beef Tehari",
+          "description": "Spiced rice with beef chunks",
+          "price": 250,
+          "category": "Biryani"
+        },
+        {
+          "name": "Chicken Jali Kabab (2 pcs)",
+          "description": "Minced chicken kabab",
+          "price": 120,
+          "category": "Kabab"
+        },
+        {
+          "name": "Firni with Jorda",
+          "description": "",
+          "price": 100,
+          "category": "Dessert"
+        }
+      ]
+    }
+  ]
+}

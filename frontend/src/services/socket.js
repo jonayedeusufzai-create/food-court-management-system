@@ -1,7 +1,8 @@
 import { io } from 'socket.io-client';
 
 // Initialize socket connection
-const socket = io(process.env.REACT_APP_API_URL || 'http://localhost:5001', {
+// Connect directly to the server, not to a specific namespace
+const socket = io(process.env.REACT_APP_SOCKET_URL || 'http://localhost:5001', {
   transports: ['websocket', 'polling'],
   withCredentials: true
 });

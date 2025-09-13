@@ -51,12 +51,17 @@
   align-items: center;
 }
 
+.user-menu {
+  display: flex;
+  align-items: center;
+}
+
 .user-greeting {
   margin-right: 1rem;
   color: #333;
 }
 
-.login-btn, .logout-btn {
+.login-btn, .logout-btn, .cart-btn {
   padding: 0.5rem 1rem;
   border-radius: 4px;
   text-decoration: none;
@@ -64,6 +69,8 @@
   cursor: pointer;
   transition: background-color 0.3s;
   border: none;
+  display: inline-block;
+  margin-right: 0.5rem;
 }
 
 .login-btn {
@@ -75,6 +82,24 @@
   background-color: #238577;
 }
 
+.cart-btn {
+  background-color: #2a9d8f;
+  color: white;
+  margin-right: 10px;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+  display: inline-flex;
+  align-items: center;
+}
+
+.cart-btn:hover {
+  background-color: #238577;
+}
+
 .logout-btn {
   background-color: #dc3545;
   color: white;
@@ -82,6 +107,16 @@
 
 .logout-btn:hover {
   background-color: #c82333;
+}
+
+.cart-count-badge {
+  background-color: #ff6b35;
+  color: white;
+  border-radius: 50%;
+  padding: 0.1rem 0.4rem;
+  font-size: 0.8rem;
+  margin-left: 0.3rem;
+  vertical-align: top;
 }
 
 /* Main Content Styles */

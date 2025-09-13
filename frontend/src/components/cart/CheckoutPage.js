@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { cartAPI, orderAPI } from '../../services/api';
 import './cart.css';
 
 const CheckoutPage = () => {
@@ -21,47 +22,19 @@ const CheckoutPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // TODO: Fetch cart from API
-    // Mock data for now
-    const mockCart = {
-      items: [
-        {
-          _id: '1',
-          menuItem: {
-            _id: '101',
-            name: 'Classic Burger',
-            price: 8.99,
-            stall: {
-              _id: '1',
-              name: 'Burger Palace'
-            }
-          },
-          quantity: 2,
-          price: 8.99
-        },
-        {
-          _id: '2',
-          menuItem: {
-            _id: '201',
-            name: 'Cheese Pizza',
-            price: 12.99,
-            stall: {
-              _id: '2',
-              name: 'Pizza Corner'
-            }
-          },
-          quantity: 1,
-          price: 12.99
-        }
-      ],
-      totalAmount: 30.97
-    };
-
-    setTimeout(() => {
-      setCart(mockCart);
-      setLoading(false);
-    }, 1000);
+    fetchCart();
   }, []);
+
+  const fetchCart = async () => {
+    try {
+      const response = await cartAPI.getCart();
+      setCart(response.data);
+      setLoading(false);
+    } catch (err) {
+      setError(err.message || 'Failed to fetch cart');
+      setLoading(false);
+    }
+  };
 
   const handleChange = (e) => {
     setFormData({
@@ -70,12 +43,43 @@ const CheckoutPage = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: Process checkout via API
-    console.log('Processing checkout:', formData);
-    alert('Order placed successfully!');
-    navigate('/orders');
+    
+    try {
+      // Create order data from cart and form data
+      const orderData = {
+        items: cart.items.map(item => ({
+          menuItem: item.menuItem._id,
+          quantity: item.quantity,
+          price: item.price
+        })),
+        totalAmount: cart.totalAmount,
+        deliveryAddress: {
+          address: formData.address,
+          city: formData.city,
+          postalCode: formData.postalCode
+        },
+        contactInfo: {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone
+        },
+        paymentMethod: formData.paymentMethod
+      };
+
+      // Process checkout via API
+      const response = await orderAPI.createOrder(orderData);
+      
+      if (response.data._id) {
+        // Clear cart after successful order
+        await cartAPI.clearCart();
+        alert('Order placed successfully!');
+        navigate('/orders');
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to process checkout');
+    }
   };
 
   if (loading) {

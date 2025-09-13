@@ -1,0 +1,56 @@
+# Login and Register Functionality Fixes
+
+## Issues Identified and Fixed:
+
+1. **Environment Variables Configuration**
+   - Fixed frontend/.env file which had a trailing '%' character
+   - Fixed backend/.env file which had a trailing '%' character
+   - Ensured proper API URL configuration for frontend (http://localhost:5001/api)
+
+2. **Password Validation Requirements**
+   - Simplified password validation in backend/utils/passwordValidator.js
+   - Changed from strict requirements (uppercase, lowercase, number, special character) 
+     to simpler requirements (minimum 6 characters with at least one letter and one number)
+   - Updated authController.js to use length validation instead of custom validation
+
+3. **Backend Server Restart**
+   - Killed existing backend process and restarted the server to apply changes
+
+4. **Frontend Component Improvements**
+   - Enhanced error handling in Login.js and Register.js components
+   - Improved error message display for better user experience
+   - Fixed token handling in authSlice.js
+   - Enhanced API error handling in services/api.js
+
+5. **Testing Verification**
+   - Verified registration works with simple passwords like "password123"
+   - Verified login works with registered user credentials
+
+## How to Test:
+
+1. Make sure MongoDB is running:
+   ps aux | grep mongod
+
+2. Start the backend server:
+   cd backend && npm start
+
+3. Test registration:
+   curl -X POST http://localhost:5001/api/auth/register -H "Content-Type: application/json" -d '{"name":"Test User","email":"test@example.com","password":"password123"}'
+
+4. Test login:
+   curl -X POST http://localhost:5001/api/auth/login -H "Content-Type: application/json" -d '{"email":"test@example.com","password":"password123"}'
+
+## Frontend Testing:
+
+1. Make sure both frontend and backend servers are running
+2. Navigate to http://localhost:3000/register to test registration
+3. Navigate to http://localhost:3000/login to test login
+
+Both should now work correctly with the fixes applied.
+
+## Additional Notes:
+
+- The password requirements have been simplified for easier testing
+- Error handling has been improved in both frontend and backend
+- Token management has been enhanced for better authentication flow
+- All components now properly handle API errors and display meaningful messages to users

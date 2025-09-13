@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { cartAPI } from '../../services/api';
 import './cart.css';
 
 const CartPage = () => {
@@ -12,106 +13,42 @@ const CartPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // TODO: Fetch cart from API
-    // Mock data for now
-    const mockCart = {
-      items: [
-        {
-          _id: '1',
-          menuItem: {
-            _id: '101',
-            name: 'Classic Burger',
-            price: 8.99,
-            image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1998&q=80',
-            stall: {
-              _id: '1',
-              name: 'Burger Palace'
-            }
-          },
-          quantity: 2,
-          price: 8.99
-        },
-        {
-          _id: '2',
-          menuItem: {
-            _id: '201',
-            name: 'Cheese Pizza',
-            price: 12.99,
-            image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-            stall: {
-              _id: '2',
-              name: 'Pizza Corner'
-            }
-          },
-          quantity: 1,
-          price: 12.99
-        },
-        {
-          _id: '3',
-          menuItem: {
-            _id: '301',
-            name: 'French Fries',
-            price: 3.99,
-            image: 'https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-            stall: {
-              _id: '1',
-              name: 'Burger Palace'
-            }
-          },
-          quantity: 1,
-          price: 3.99
-        }
-      ],
-      totalAmount: 30.97
-    };
-
-    setTimeout(() => {
-      setCart(mockCart);
-      setLoading(false);
-    }, 1000);
+    fetchCart();
   }, []);
 
-  const updateQuantity = (itemId, newQuantity) => {
-    // TODO: Update cart item quantity via API
-    console.log('Updating item quantity:', itemId, newQuantity);
-    
-    setCart(prevCart => {
-      const updatedItems = prevCart.items.map(item => 
-        item._id === itemId 
-          ? { ...item, quantity: newQuantity }
-          : item
-      ).filter(item => item.quantity > 0); // Remove items with quantity 0
-      
-      const newTotal = updatedItems.reduce(
-        (total, item) => total + (item.quantity * item.price),
-        0
-      );
-      
-      return {
-        ...prevCart,
-        items: updatedItems,
-        totalAmount: newTotal
-      };
-    });
+  const fetchCart = async () => {
+    try {
+      const response = await cartAPI.getCart();
+      setCart(response.data);
+      setLoading(false);
+    } catch (err) {
+      setError(err.message || 'Failed to fetch cart');
+      setLoading(false);
+    }
   };
 
-  const removeItem = (itemId) => {
-    // TODO: Remove item from cart via API
-    console.log('Removing item:', itemId);
-    
-    setCart(prevCart => {
-      const updatedItems = prevCart.items.filter(item => item._id !== itemId);
-      const newTotal = updatedItems.reduce(
-        (total, item) => total + (item.quantity * item.price),
-        0
-      );
-      
-      return {
-        ...prevCart,
-        items: updatedItems,
-        totalAmount: newTotal
-      };
-    });
+  const updateQuantity = async (itemId, newQuantity) => {
+    if (newQuantity < 1) {
+      // If quantity is less than 1, remove the item
+      removeItem(itemId);
+      return;
+    }
+
+    try {
+      const response = await cartAPI.updateCartItem(itemId, newQuantity);
+      setCart(response.data);
+    } catch (err) {
+      setError(err.message || 'Failed to update item quantity');
+    }
+  };
+
+  const removeItem = async (itemId) => {
+    try {
+      const response = await cartAPI.removeFromCart(itemId);
+      setCart(response.data);
+    } catch (err) {
+      setError(err.message || 'Failed to remove item from cart');
+    }
   };
 
   const handleCheckout = () => {
@@ -180,6 +117,7 @@ const CartPage = () => {
                       <button 
                         className="quantity-btn"
                         onClick={() => updateQuantity(item._id, item.quantity - 1)}
+                        disabled={item.quantity <= 1}
                       >
                         -
                       </button>
@@ -234,16 +172,18 @@ const CartPage = () => {
                 </div>
               </div>
               
-              <button 
-                className="btn btn-primary checkout-btn"
-                onClick={handleCheckout}
-              >
-                Proceed to Checkout
-              </button>
-              
-              <Link to="/stalls" className="btn btn-outline continue-shopping-btn">
-                Continue Shopping
-              </Link>
+              <div className="summary-actions">
+                <button 
+                  className="btn btn-primary checkout-btn"
+                  onClick={handleCheckout}
+                >
+                  Proceed to Checkout
+                </button>
+                
+                <Link to="/stalls" className="btn btn-outline continue-shopping-btn">
+                  Continue Shopping
+                </Link>
+              </div>
             </div>
           </div>
         )}

@@ -227,12 +227,19 @@
   color: #ff6b35;
 }
 
+.summary-actions {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
 .checkout-btn {
   width: 100%;
   padding: 1rem;
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 1rem;
+  margin-top: 1rem;
 }
 
 .continue-shopping-btn {

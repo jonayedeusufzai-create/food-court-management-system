@@ -1,0 +1,14 @@
+ADDITIONAL DELETED FILES
+
+FRONTEND COMPONENTS:
+1. frontend/src/components/auth/SimpleLogin.js - Unused authentication component
+2. frontend/src/components/auth/SimpleRegister.js - Unused authentication component
+3. frontend/src/components/dashboard/CustomerDashboard.js - Older dashboard implementation
+4. frontend/src/components/dashboard/FoodCourtOwnerDashboard.js - Older dashboard implementation
+5. frontend/src/components/dashboard/StallOwnerDashboard.js - Older dashboard implementation
+6. frontend/src/components/menu/MenuManagement.js - Unused menu management component
+7. frontend/src/components/menu/menuManagement.css - CSS for unused menu management component
+8. frontend/src/components/admin/ManageMenu.js - Integrated into ManageStalls
+9. frontend/src/components/admin/index.js - Export file for deleted component
+
+These additional files were identified as unnecessary during the cleanup process and have been removed to further streamline the project structure.

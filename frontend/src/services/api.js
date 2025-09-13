@@ -13,6 +13,9 @@ API.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
+}, (error) => {
+  console.error('Request interceptor error:', error);
+  return Promise.reject(error);
 });
 
 // Add a response interceptor to handle errors
@@ -23,7 +26,20 @@ API.interceptors.response.use(
   },
   (error) => {
     console.error('API error:', error);
-    return Promise.reject(error);
+    // Handle different types of errors
+    if (error.response) {
+      // Server responded with error status
+      console.error('API response error:', error.response);
+      return Promise.reject(error.response);
+    } else if (error.request) {
+      // Request was made but no response received
+      console.error('API request error:', error.request);
+      return Promise.reject({ message: 'Network error. Please check your connection.' });
+    } else {
+      // Something else happened
+      console.error('API general error:', error.message);
+      return Promise.reject({ message: 'An error occurred. Please try again.' });
+    }
   }
 );
 
@@ -33,7 +49,10 @@ export const authAPI = {
     console.log('Calling register API with data:', userData);
     return API.post('/auth/register', userData);
   },
-  login: (userData) => API.post('/auth/login', userData),
+  login: (userData) => {
+    console.log('Calling login API with data:', userData);
+    return API.post('/auth/login', userData);
+  },
   verifyEmail: (token) => API.get(`/auth/verify/${token}`),
   registerAdmin: (userData) => API.post('/auth/admin/register', userData),
 };
@@ -80,6 +99,15 @@ export const menuAPI = {
   createMenuItem: (menuItemData) => API.post('/menu', menuItemData),
   updateMenuItem: (id, menuItemData) => API.put(`/menu/${id}`, menuItemData),
   deleteMenuItem: (id) => API.delete(`/menu/${id}`),
+};
+
+// Cart API calls
+export const cartAPI = {
+  getCart: () => API.get('/cart'),
+  addToCart: (itemData) => API.post('/cart', itemData),
+  updateCartItem: (itemId, quantity) => API.put(`/cart/${itemId}`, { quantity }),
+  removeFromCart: (itemId) => API.delete(`/cart/${itemId}`),
+  clearCart: () => API.delete('/cart'),
 };
 
 export default API;
